@@ -22,7 +22,7 @@ int main()
 
 	while (true)
 	{
-		const char* cinput{ rexx.input("cls" + REPL::get_dir() + "> ") };
+		const char* cinput{ rexx.input("cls " + REPL::get_dir() + "> ") };
 		if (!cinput)
 			break;
 
