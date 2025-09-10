@@ -4,10 +4,9 @@ project(shell)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_BUILD_TYPE release)
+set(BUILD_SHARED_LIBS OFF CACHE BOOL "Build static libraries" FORCE)
 
 include(FetchContent)
-
-set(BUILD_SHARED_LIBS OFF CACHE BOOL "Build static libraries" FORCE)
 
 FetchContent_Declare(
         replxx
