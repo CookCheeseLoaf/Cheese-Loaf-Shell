@@ -23,30 +23,14 @@ set(SOURCES
 add_executable(cclshell ${SOURCES})
 include_directories(include)
 
-function(setup_replxx target)
-    find_package(Threads REQUIRED)
+find_package(Threads REQUIRED)
 
-    find_package(replxx QUIET)
+find_package(replxx REQUIRED)
 
-    if(replxx_FOUND)
-        message(STATUS "Found replxx package")
-        target_link_libraries(${target} PRIVATE replxx::replxx)
-    else()
-        message(WARNING "replxx package not found. Building from source.")
-        include(FetchContent)
-        FetchContent_Declare(
-                replxx
-                GIT_REPOSITORY https://github.com/AmokHuginnsson/replxx.git
-                GIT_TAG        master
-                CMAKE_ARGS -DREPLXX_BUILD_PACKAGE=OFF -DBUILD_SHARED_LIBS=OFF
-                EXCLUDE_FROM_ALL
-        )
-        FetchContent_MakeAvailable(replxx)
-        target_link_libraries(${target} PRIVATE replxx)
-    endif()
-endfunction()
-
-setup_replxx(cclshell)
+if(replxx_FOUND)
+    message(STATUS "Found replxx package")
+    target_link_libraries(cclshell PRIVATE replxx::replxx)
+endif()
 
 if(UNIX)
     set_target_properties(cclshell PROPERTIES
