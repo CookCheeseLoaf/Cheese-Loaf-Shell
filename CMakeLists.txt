@@ -26,56 +26,23 @@ include_directories(include)
 function(setup_replxx target)
     find_package(Threads REQUIRED)
 
-    # Search for libreplxx.a in common system directories
-    find_library(REPLXX_STATIC_LIB
-            NAMES replxx
-            PATHS /usr/local/lib /usr/lib
-            NO_DEFAULT_PATH
-    )
+    find_package(replxx QUIET)
 
-    if(REPLXX_STATIC_LIB AND EXISTS ${REPLXX_STATIC_LIB})
-        message(STATUS "Found replxx static library at: ${REPLXX_STATIC_LIB}")
-
-        add_library(replxx::replxx STATIC IMPORTED)
-        set_target_properties(replxx::replxx PROPERTIES
-                IMPORTED_LOCATION ${REPLXX_STATIC_LIB}
-        )
-
-        find_path(REPLXX_INCLUDE_DIR
-                NAMES replxx.h
-                PATHS /usr/local/include /usr/include
-                NO_DEFAULT_PATH
-        )
-
-        if(REPLXX_INCLUDE_DIR)
-            set_target_properties(replxx::replxx PROPERTIES
-                    INTERFACE_INCLUDE_DIRECTORIES ${REPLXX_INCLUDE_DIR}
-            )
-        else()
-            message(WARNING "replxx include directory not found. Building from source.")
-            set(REPLXX_STATIC_LIB "REPLXX_STATIC_LIB-NOTFOUND") # Force FetchContent
-        endif()
-    endif()
-
-    if(NOT REPLXX_STATIC_LIB OR NOT EXISTS ${REPLXX_STATIC_LIB})
-        message(WARNING "replxx not found. Building from source.")
+    if(replxx_FOUND)
+        message(STATUS "Found replxx package")
+        target_link_libraries(${target} PRIVATE replxx::replxx)
+    else()
+        message(WARNING "replxx package not found. Building from source.")
         include(FetchContent)
         FetchContent_Declare(
                 replxx
                 GIT_REPOSITORY https://github.com/AmokHuginnsson/replxx.git
                 GIT_TAG        master
                 CMAKE_ARGS -DREPLXX_BUILD_PACKAGE=OFF -DBUILD_SHARED_LIBS=OFF
+                EXCLUDE_FROM_ALL
         )
         FetchContent_MakeAvailable(replxx)
         target_link_libraries(${target} PRIVATE replxx)
-
-        set_target_properties(replxx PROPERTIES EXCLUDE_FROM_ALL TRUE)
-        if(TARGET replxx::replxx)
-            set_target_properties(replxx PROPERTIES EXCLUDE_FROM_ALL TRUE)
-        endif()
-    else()
-        # Use the found system library
-        target_link_libraries(${target} PRIVATE replxx::replxx)
     endif()
 endfunction()
 
