@@ -27,6 +27,7 @@ after building it, you could move the executable file into the binary directorie
 ```cmake
 cmake --install build
 ```
+> this step require adminstrator/root access, so use sudo, doas, or su in unix, and logged into adminstrator in windows would suffice.
 
 ---
 ### How to run it?
