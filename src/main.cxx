@@ -10,6 +10,7 @@ int main()
 	REPL repl{};
 	std::ios::sync_with_stdio(false);
 	repl("ver");
+	std::cout.flush();
 
 	while (true)
 	{
