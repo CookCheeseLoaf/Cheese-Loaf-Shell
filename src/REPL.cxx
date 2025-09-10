@@ -5,6 +5,7 @@
 #include <iostream>
 #include <map>
 #include <functional>
+#include <algorithm>
 
 #include "ANSI.hxx"
 #include "REPL.hxx"
