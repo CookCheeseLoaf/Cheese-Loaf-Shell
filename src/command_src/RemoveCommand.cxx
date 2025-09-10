@@ -5,6 +5,7 @@
 #include "RemoveCommand.hxx"
 #include <iostream>
 #include <sstream>
+#include <vector>
 
 void RemoveCommand::execute(const std::string& args)
 {
