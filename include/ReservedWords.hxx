@@ -5,7 +5,6 @@
 #ifndef SHELL_RESERVED_WORD_H
 #define SHELL_RESERVED_WORD_H
 
-
 #include <string>
 #include <map>
 #include <stdexcept>
