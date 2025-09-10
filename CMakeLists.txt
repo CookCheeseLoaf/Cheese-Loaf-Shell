@@ -3,53 +3,61 @@ project(cclshell)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_BUILD_TYPE release)
+set(CMAKE_BUILD_TYPE Release)
 set(BUILD_SHARED_LIBS OFF CACHE BOOL "Build static libraries" FORCE)
 
-add_executable(cclshell
+set(SOURCES
         src/main.cxx
-        src/command_src/RenameCommand.cxx
+        src/REPL.cxx
         src/FileSystemUtils.cxx
         src/command_src/ChangeDirectoriesCommand.cxx
-        src/command_src/RemoveDirectoriesCommand.cxx
-        src/command_src/RemoveCommand.cxx
-        src/command_src/MakeDirectoriesCommand.cxx
         src/command_src/CopyCommand.cxx
-        src/command_src/ListDirectoriesCommand.cxx
-        src/REPL.cxx
-        include/FunctionCommands.hxx
         src/command_src/FunctionCommands.cxx
+        src/command_src/ListDirectoriesCommand.cxx
+        src/command_src/MakeDirectoriesCommand.cxx
+        src/command_src/RemoveCommand.cxx
+        src/command_src/RemoveDirectoriesCommand.cxx
+        src/command_src/RenameCommand.cxx
 )
 
+add_executable(cclshell ${SOURCES})
 include_directories(include)
 
-find_package(replxx QUIET)
-if (replxx_FOUND)
-    message(STATUS "replxx static library found. Defaulting to it.")
-    target_link_libraries(cclshell PRIVATE replxx)
-else()
-    message(WARNING "replxx not found. Building from source.")
-    include(FetchContent)
-
-    FetchContent_Declare(
-            replxx
-            GIT_REPOSITORY https://github.com/AmokHuginnsson/replxx.git
-            GIT_TAG        master
-    )
-
-    FetchContent_MakeAvailable(replxx)
-    if (TARGET replxx::replxx)
-        target_link_libraries(cclshell PRIVATE replxx)
+function(setup_replxx target)
+    find_package(Threads REQUIRED)
+    find_package(replxx QUIET)
+    if(replxx_FOUND)
+        message(STATUS "replxx static library found. Defaulting to it.")
+        if(TARGET replxx::replxx)
+            target_link_libraries(${target} PRIVATE replxx::replxx)
+        else()
+            target_link_libraries(${target} PRIVATE replxx)
+        endif()
     else()
-        message(WARNING "Couldn't find replxx target name; attempting to link 'replxx' library name")
-        target_link_libraries(cclshell PRIVATE replxx)
+        message(WARNING "replxx not found. Building from source.")
+        include(FetchContent)
+        FetchContent_Declare(
+                replxx
+                GIT_REPOSITORY https://github.com/AmokHuginnsson/replxx.git
+                GIT_TAG        master
+        )
+        FetchContent_MakeAvailable(replxx)
+            target_link_libraries(${target} PRIVATE replxx)
+        execute_process(
+                COMMAND ${CMAKE_COMMAND} -E remove_directory ${replxx_SOURCE_DIR}
+                COMMENT "Deleting temporary replxx source folder"
+        )
     endif()
-endif()
+endfunction()
 
-if (UNIX)
-    set_target_properties(cclshell PROPERTIES LINK_SEARCH_START_STATIC ON)
-    set_target_properties(cclshell PROPERTIES LINK_SEARCH_END_STATIC ON)
+setup_replxx(cclshell)
+
+if(UNIX)
+    set_target_properties(cclshell PROPERTIES
+            LINK_SEARCH_START_STATIC ON
+            LINK_SEARCH_END_STATIC ON
+    )
     set(CMAKE_EXE_LINKER_FLAGS "-static")
 endif()
 
-install(TARGETS cclshell DESTINATION "bin")
+install(TARGETS cclshell DESTINATION bin)
