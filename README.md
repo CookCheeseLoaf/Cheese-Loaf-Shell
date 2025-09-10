@@ -18,7 +18,7 @@ Before you could build it, you would **obviously** need dependencies.
 > Important note: if you don't have **replxx** dependency, the cmake will build replxx sourcely, and removes it after it is done compiling.
 
 ```cmake
-cmake --source . -B build
+cmake -S . -B build
 ```
 ```cmake
 cmake --build build
