@@ -13,7 +13,7 @@ int main()
 
 	while (true)
 	{
-		const char* cinput{ rexx.input("(" + REPL::get_dir() + ")% ")};
+		const char* cinput{ rexx.input(REPL::get_dir() + "> ")};
 		if (!cinput)
 			break;
 
