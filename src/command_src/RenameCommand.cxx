@@ -1,6 +1,7 @@
 #include "RenameCommand.hxx"
 #include <sstream>
 #include <iostream>
+#include <vector>
 
 void RenameCommand::execute(const std::string& args)
 {
