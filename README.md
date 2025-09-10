@@ -3,7 +3,7 @@ A portable minimalist shell.
 
 > WARNING: The shell is on ALPHA release, not all command works out of the box,
 > **Use it in your own risk!**.
-> ~~I don't want to come around and asking me what happened to your os.~~
+> ~~I don't want to come around and asking me what happened to your os. lol~~
 
 You are welcome to help if you want. :-)
 
@@ -15,10 +15,10 @@ Before you could build it, you would **obviously** need dependencies.
 + Compiler (GCC/Clang/MSVC) Make sure it support C++17, otherwise it would refuse to build.
 + [Replxx](https://github.com/AmokHuginnsson/replxx)
 
-> Important note: if you don't have **replxx** dependency, the cmake will build replxx sourcely, and removes it after it is done compiling.
+> Important note: if you don't have **replxx** dependency, the cmake will build replxx sourcely, and removes it after it is done compiling (as it is staticlly linked)
 
 ```cmake
-cmake --source . -B build
+cmake -S . -B build
 ```
 ```cmake
 cmake --build build
