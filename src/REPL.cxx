@@ -2,7 +2,6 @@
 // Created by Loaf on 9/4/2025.
 //
 
-
 #include <iostream>
 #include <map>
 #include <functional>
@@ -55,15 +54,16 @@ REPL::REPL()
 {
     m_commands[ReservedWords::DIR] =    [](const std::string& args) { ListDirectoriesCommand{}.execute(args); };
     m_commands[ReservedWords::CHDIR] =  [](const std::string& args) { ChangeDirectoriesCommand{}.execute(args); };
-    m_commands[ReservedWords::CLEAR] =  [](std::string const&) { std::cout << ansi::CLEAR_SCREEN; };
     m_commands[ReservedWords::COPY] =   [](const std::string& args) { CopyCommand{}.execute(args); };
     m_commands[ReservedWords::DELETE] = [](const std::string& args) { RemoveCommand{}.execute(args); };
 
-    m_commands[ReservedWords::ECHO] =   [](const std::string& args) { std::cout << args << '\n'; };
-    m_commands[ReservedWords::EXIT] =   [](std::string const&) { std::exit(0); };
     m_commands[ReservedWords::MKDIR] =  [](const std::string& args) { MakeDirectoriesCommand{}.execute(args); };
     m_commands[ReservedWords::RMDIR] =  [](const std::string& args) { RemoveDirectoriesCommand{}.execute(args); };
     m_commands[ReservedWords::RENAME] = [](const std::string& args) { RenameCommand{}.execute(args); };
+
+    m_commands[ReservedWords::EXIT] =   [](std::string const&) { std::exit(0); };
+    m_commands[ReservedWords::PRINT] =   [](const std::string& args) { std::cout << args << '\n'; };
+    m_commands[ReservedWords::CLEAR] =  [](std::string const&) { std::cout << ansi::CLEAR_SCREEN; };
     m_commands[ReservedWords::VER] =    [](const std::string&) { std::cout << "Cheese Loaf Shell (version: 0.01)\n"; };
 
     m_commands[ReservedWords::SHOW] =   show_command;

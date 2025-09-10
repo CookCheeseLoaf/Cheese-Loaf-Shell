@@ -20,7 +20,7 @@ enum class ReservedWords : std::uint8_t {
     DEL,
     DELETE,
     ERASE,
-    ECHO,
+    PRINT,
     EXIT,
     HELP,
     MKDIR,
@@ -50,7 +50,7 @@ inline ReservedWords stringToReservedWord(const std::string& str)
         {"DEL",     ReservedWords::DEL},
         {"DELETE",  ReservedWords::DELETE},
         {"ERASE",   ReservedWords::ERASE},
-        {"ECHO",    ReservedWords::ECHO},
+        {"PRINT",ReservedWords::PRINT},
         {"EXIT",    ReservedWords::EXIT},
         {"HELP",    ReservedWords::HELP},
         {"MKDIR",   ReservedWords::MKDIR},
@@ -84,12 +84,12 @@ constexpr const char* reservedWordToString(const ReservedWords word)
         case ReservedWords::DEL:       return "DEL";
         case ReservedWords::DELETE:    return "DELETE";
         case ReservedWords::ERASE:     return "ERASE";
-        case ReservedWords::ECHO:      return "ECHO";
+        case ReservedWords::PRINT:     return "PRINT";
         case ReservedWords::EXIT:      return "EXIT";
         case ReservedWords::HELP:      return "HELP";
         case ReservedWords::MKDIR:     return "MKDIR";
         case ReservedWords::MD:        return "MD";
-        case ReservedWords::PAUSE:    return "PAUSE";
+        case ReservedWords::PAUSE:     return "PAUSE";
         case ReservedWords::RMDIR:     return "RMDIR";
         case ReservedWords::RD:        return "RD";
         case ReservedWords::RENAME:    return "RENAME";
@@ -110,7 +110,7 @@ constexpr const char* informationAboutReservedWords(const ReservedWords word)
         case ReservedWords::CLS: return "Clear the screen.";
         case ReservedWords::DIR: return "List files and directories.";
         case ReservedWords::VER: return "Cheese Loaf Shell version.";
-        case ReservedWords::ECHO: return "Display messages.";
+        case ReservedWords::PRINT: return "Display messages.";
         case ReservedWords::HELP: return "Show help.";
         case ReservedWords::MKDIR:
         case ReservedWords::MD: return "Make Directories.";
