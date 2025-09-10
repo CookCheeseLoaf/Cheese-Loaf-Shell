@@ -13,7 +13,7 @@ int main()
 
 	while (true)
 	{
-		const char* cinput{ rexx.input(REPL::get_dir() + "> ")};
+		const char* cinput{ rexx.input(REPL::get_dir() + "> ") };
 		if (!cinput)
 			break;
 
@@ -21,13 +21,13 @@ int main()
 		if (input.empty())
 			continue;
 
-		rexx.history_add(input);
-
 		if (!repl(input))
 		{
 			std::string cmd;
 			std::istringstream{ input } >> cmd;
 			std::cerr << "Illegal command: " << cmd << '\n';
 		}
+
+		rexx.history_add(input);
 	}
 }
