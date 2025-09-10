@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.28.3)
-project(shell)
+project(cclshell)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -16,7 +16,7 @@ FetchContent_Declare(
 
 FetchContent_MakeAvailable(replxx)
 
-add_executable(shell
+add_executable(cclshell
         src/main.cxx
         src/command_src/RenameCommand.cxx
         src/FileSystemUtils.cxx
@@ -35,16 +35,18 @@ add_executable(shell
 include_directories(include)
 
 if (TARGET replxx::replxx)
-    target_link_libraries(shell PRIVATE replxx::replxx)
+    target_link_libraries(cclshell PRIVATE replxx::replxx)
 elseif (TARGET replxx)
-    target_link_libraries(shell PRIVATE replxx)
+    target_link_libraries(cclshell PRIVATE replxx)
 else()
     message(WARNING "Couldn't find replxx target name; attempting to link 'replxx' library name")
-    target_link_libraries(shell PRIVATE replxx)
+    target_link_libraries(cclshell PRIVATE replxx)
 endif()
 
 if (UNIX)
-    set_target_properties(shell PROPERTIES LINK_SEARCH_START_STATIC ON)
-    set_target_properties(shell PROPERTIES LINK_SEARCH_END_STATIC ON)
+    set_target_properties(cclshell PROPERTIES LINK_SEARCH_START_STATIC ON)
+    set_target_properties(cclshell PROPERTIES LINK_SEARCH_END_STATIC ON)
     set(CMAKE_EXE_LINKER_FLAGS "-static")
 endif()
+
+install(TARGETS cclshell DESTINATION "bin")
