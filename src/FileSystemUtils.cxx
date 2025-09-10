@@ -21,7 +21,7 @@ std::string FileSystemUtils::get_home_directory()
         return home;
     }
 #else
-    if (const char* home{ std::getenv("HOME"))
+    if (const char* home{ std::getenv("HOME") })
         return home;
 #endif
         return ".";
