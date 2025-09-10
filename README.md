@@ -1,4 +1,4 @@
-# Welcome to the Cheese Loaf Shell (cclshell)
+# Welcome to the Cheese Loaf Shell (cls)
 A portable minimalist shell.
 
 > WARNING: The shell is on ALPHA release, not all command works out of the box,
@@ -32,5 +32,5 @@ cmake --install build
 ### How to run it?
 you can either run the cclshell in the compiled **build** directories or call it directly in terminal (after moving it through the binary directories)
 ```shell
-cclshell
+clshell
 ```
