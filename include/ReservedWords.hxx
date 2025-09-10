@@ -9,6 +9,7 @@
 #include <string>
 #include <map>
 #include <stdexcept>
+#include <cstdint>
 
 enum class ReservedWords : std::uint8_t {
     DIR,
