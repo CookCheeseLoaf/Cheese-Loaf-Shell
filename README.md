@@ -15,7 +15,7 @@ Before you could build it, you would **obviously** need dependencies.
 + Compiler (GCC/Clang/MSVC) Make sure it support C++17, otherwise it would refuse to build.
 + [Replxx](https://github.com/AmokHuginnsson/replxx)
 
-> Important note: if you don't have **replxx** dependency, the cmake will build replxx sourcely, and removes it after it is done compiling (as it is staticly linked)
+> Important note: if you don't have **replxx** dependency, the cmake will build replxx sourcely, and removes it after it is done compiling (as it is staticlly linked)
 
 ```cmake
 cmake -S . -B build
