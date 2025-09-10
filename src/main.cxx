@@ -21,13 +21,15 @@ int main()
 		if (input.empty())
 			continue;
 
+		rexx.history_add(input);
+
 		if (!repl(input))
 		{
 			std::string cmd;
 			std::istringstream{ input } >> cmd;
 			std::cerr << "Illegal command: " << cmd << '\n';
 		}
-
-		rexx.history_add(input);
+		else
+			std::cout.flush();
 	}
 }
