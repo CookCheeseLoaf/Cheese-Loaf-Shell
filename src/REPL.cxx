@@ -65,7 +65,17 @@ REPL::REPL()
     m_commands[ReservedWords::EXIT] =   [](std::string const&) { std::exit(0); };
     m_commands[ReservedWords::PRINT] =   [](const std::string& args) { std::cout << args << '\n'; };
     m_commands[ReservedWords::CLEAR] =  [](std::string const&) { std::cout << ansi::CLEAR_SCREEN; };
-    m_commands[ReservedWords::VER] =    [](const std::string&) { std::cout << "Cheese Loaf Shell (version: 0.01)\n"; };
+    m_commands[ReservedWords::VER] =    [](const std::string&) {
+        std::cout << R"(
+   _____ _                           _                  __    _____ _          _ _
+  / ____| |                         | |                / _|  / ____| |        | | |
+ | |    | |__   ___  ___  ___  ___  | |     ___   __ _| |_  | (___ | |__   ___| | |
+ | |    | '_ \ / _ \/ _ \/ __|/ _ \ | |    / _ \ / _` |  _|  \___ \| '_ \ / _ \ | |
+ | |____| | | |  __/  __/\__ \  __/ | |___| (_) | (_| | |    ____) | | | |  __/ | |
+  \_____|_| |_|\___|\___||___/\___| |______\___/ \__,_|_|   |_____/|_| |_|\___|_|_|)" << '\n';
+
+        std::cout << "Cheese Loaf Shell (version: 0.01)\n";
+    };
 
     m_commands[ReservedWords::SHOW] =   show_command;
     m_commands[ReservedWords::PAUSE] =  portable_getch;
