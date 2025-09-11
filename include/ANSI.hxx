@@ -1,13 +1,12 @@
 #ifndef ANSI_HXX
 #define ANSI_HXX
 
-#include <cstdint>
 #include <string>
 #include <string_view>
 
 namespace ansi
 {
-	enum class Foreground : uint8_t
+	enum class Foreground : unsigned char
 	{
 		BLACK = 30,
 		RED,
@@ -27,7 +26,7 @@ namespace ansi
 		BRIGHT_WHITE
 	};
 
-	enum class Background : uint8_t
+	enum class Background : unsigned char
 	{
 		BLACK = 40,
 		RED,
@@ -52,12 +51,12 @@ namespace ansi
 
 	inline std::string foreground(Foreground fg)
 	{
-		return "\033[" + std::to_string(static_cast<uint8_t>(fg)) + "m";
+		return "\033[" + std::to_string(static_cast<unsigned char>(fg)) + "m";
 	}
 
 	inline std::string background(Background bg)
 	{
-		return "\033[" + std::to_string(static_cast<uint8_t>(bg)) + "m";
+		return "\033[" + std::to_string(static_cast<unsigned char>(bg)) + "m";
 	}
 }
 #endif
