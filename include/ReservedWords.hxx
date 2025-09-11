@@ -8,9 +8,8 @@
 #include <string>
 #include <map>
 #include <stdexcept>
-#include <cstdint>
 
-enum class ReservedWords : std::uint8_t {
+enum class ReservedWords : unsigned char {
     DIR,
     CD,
     CHDIR,
