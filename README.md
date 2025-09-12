@@ -31,7 +31,7 @@ cmake --install build
 
 ---
 ### How to run it?
-you can either run the cclshell in the compiled **build** directories or call it directly in terminal (after moving it through the binary directories)
+you can either run the clshell in the compiled **build** directories or call it directly in terminal (after moving it through the binary directories)
 ```shell
 clshell
 ```
