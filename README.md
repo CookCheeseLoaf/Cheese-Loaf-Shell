@@ -1,5 +1,5 @@
 # Welcome to the Cheese Loaf Shell (cls)
-A portable minimalist shell.
+A portable minimalist heavily Influnced by DOS shell and command prompt shell.
 
 > WARNING: The shell is on ALPHA release, not all command works out of the box,
 > **Use it in your own risk!**.
