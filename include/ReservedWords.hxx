@@ -31,6 +31,7 @@ enum class ReservedWords : unsigned char {
     REN,
     SHOW,
     TOUCH,
+    WHEREAMI,
     VER,
     UNKNOWN
 };
@@ -49,7 +50,7 @@ inline ReservedWords stringToReservedWord(const std::string& str)
         {"DEL",     ReservedWords::DEL},
         {"DELETE",  ReservedWords::DELETE},
         {"ERASE",   ReservedWords::ERASE},
-        {"PRINT",ReservedWords::PRINT},
+        {"PRINT",   ReservedWords::PRINT},
         {"EXIT",    ReservedWords::EXIT},
         {"HELP",    ReservedWords::HELP},
         {"MKDIR",   ReservedWords::MKDIR},
@@ -60,11 +61,12 @@ inline ReservedWords stringToReservedWord(const std::string& str)
         {"RENAME",  ReservedWords::RENAME},
         {"REN",     ReservedWords::REN},
         {"SHOW",    ReservedWords::SHOW},
+        {"WHEREAMI",ReservedWords::WHEREAMI},
         {"TOUCH",   ReservedWords::TOUCH},
         {"VER",     ReservedWords::VER}
     };
 
-    if (const auto it{ stringToEnum.find(str) }; it != stringToEnum.end())
+    if (const auto it = stringToEnum.find(str); it != stringToEnum.end())
         return it->second;
     return ReservedWords::UNKNOWN;
 }
@@ -94,6 +96,7 @@ constexpr const char* reservedWordToString(const ReservedWords word)
         case ReservedWords::RENAME:    return "RENAME";
         case ReservedWords::REN:       return "REN";
         case ReservedWords::SHOW:      return "SHOW";
+        case ReservedWords::WHEREAMI: return "WHEREAMI";
         case ReservedWords::TOUCH:     return "TOUCH";
         case ReservedWords::VER:       return "VER";
         default:                       return "UNKNOWN";
@@ -125,6 +128,7 @@ constexpr const char* informationAboutReservedWords(const ReservedWords word)
         case ReservedWords::ERASE: return "Removes the file.";
         case ReservedWords::CHDIR:
         case ReservedWords::CD: return "Change current directories.";
+        case ReservedWords::WHEREAMI: return "Show the current directories.";
         default: return "UNKNOWN.";
     }
 }

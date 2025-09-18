@@ -9,7 +9,7 @@
 
 void ListDirectoriesCommand::execute(const std::string& args)
 {
-    const fs::path dir{ args.empty() ? "." : args };
+    const fs::path dir = args.empty() ? "." : args;
 
     try
     {
@@ -24,8 +24,8 @@ void ListDirectoriesCommand::execute(const std::string& args)
 
 void ListDirectoriesCommand::PrintEntry(const fs::directory_entry& entry)
 {
-    const std::string name{ entry.path().filename().string() };
-    const std::string color{ DetermineColor(entry) };
+    const std::string name = entry.path().filename().string();
+    const std::string color = DetermineColor(entry);
 
     std::cout << color << name << (color.empty() ? "" : ansi::RESET) << '\n';
 }

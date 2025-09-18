@@ -20,7 +20,7 @@ void help_command(std::string const&)
         << ansi::foreground(ansi::Foreground::BLUE)
         << wordStr
         << ansi::RESET
-        << std::string(6 - wordStr.size(), ' ')
+        << std::string(8 - wordStr.size(), ' ')
         << "> "
         << informationAboutReservedWords(w)
         << '\n';

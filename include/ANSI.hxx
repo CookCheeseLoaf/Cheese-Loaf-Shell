@@ -46,8 +46,8 @@ namespace ansi
 		BRIGHT_WHITE
 	};
 
-	inline constexpr std::string_view RESET{ "\033[0m" };
-	inline constexpr std::string_view CLEAR_SCREEN{ "\033[2J\033[H" };
+	inline constexpr auto RESET{ "\033[0m" };
+	inline constexpr auto CLEAR_SCREEN{ "\033[2J\033[H" };
 
 	inline std::string foreground(Foreground fg)
 	{
@@ -57,6 +57,16 @@ namespace ansi
 	inline std::string background(Background bg)
 	{
 		return "\033[" + std::to_string(static_cast<unsigned char>(bg)) + "m";
+	}
+
+	inline std::string withBackground(const std::string& str, const Background bg)
+	{
+		return background(bg) + str + RESET;
+	}
+
+	inline std::string withForeground(const std::string& str, const Foreground fg)
+	{
+		return foreground(fg) + str + RESET;
 	}
 }
 #endif

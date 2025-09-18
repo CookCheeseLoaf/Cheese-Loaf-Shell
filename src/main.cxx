@@ -2,6 +2,8 @@
 #include <sstream>
 #include <replxx.hxx>
 #include <string>
+
+#include "ANSI.hxx"
 #include "REPL.hxx"
 
 int main()
@@ -14,11 +16,11 @@ int main()
 
 	while (true)
 	{
-		const char* cinput{ rexx.input("cls " + REPL::get_dir() + "> ") };
+		const char* cinput = rexx.input(ansi::withForeground(">>> ", ansi::Foreground::MAGENTA));
 		if (!cinput)
 			break;
 
-		std::string input{ cinput };
+		std::string input = cinput;
 		if (input.empty())
 			continue;
 

@@ -29,9 +29,8 @@ struct CommandCallable
 
     CommandCallable& operator=(const CommandCallable& other)
     {
-        if (this != &other) {
+        if (this != &other)
             ptr = other.ptr ? other.ptr->clone() : nullptr;
-        }
         return *this;
     }
 

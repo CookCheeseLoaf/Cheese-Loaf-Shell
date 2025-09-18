@@ -12,7 +12,7 @@
 std::string FileSystemUtils::get_home_directory()
 {
 #ifdef _WIN32
-    char* buffer{ nullptr };
+    char* buffer = nullptr;
     size_t size{};
     if (_dupenv_s(&buffer, &size, "USERPROFILE") == 0 && buffer != nullptr)
     {
@@ -21,7 +21,7 @@ std::string FileSystemUtils::get_home_directory()
         return home;
     }
 #else
-    if (const char* home{ std::getenv("HOME") })
+    if (const char* home = std::getenv("HOME"))
         return home;
 #endif
         return ".";

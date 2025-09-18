@@ -5,7 +5,7 @@
 
 void RenameCommand::execute(const std::string& args)
 {
-    auto [valid, current_file, new_file] { parse_args(args) };
+    auto [valid, current_file, new_file] = parse_args(args);
     if (!valid) return;
 
     if (!fs::exists(current_file))

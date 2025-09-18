@@ -76,6 +76,7 @@ REPL::REPL()
 
         std::cout << "Cheese Loaf Shell (version: 0.01)\n";
     };
+    m_commands[ReservedWords::WHEREAMI] = [](const std::string&) { std::cout << get_dir() << '\n'; };
 
     m_commands[ReservedWords::SHOW] =   show_command;
     m_commands[ReservedWords::PAUSE] =  portable_getch;
@@ -93,10 +94,10 @@ REPL::REPL()
 
 bool REPL::operator()(const std::string& str)
 {
-    auto [valid, commandToken, args]{ parse_args(str) };
+    auto [valid, commandToken, args] = parse_args(str);
     if (!valid) return false;
 
-    if (const auto it{ m_commands.find(stringToReservedWord(commandToken)) }; it != m_commands.end())
+    if (const auto it = m_commands.find(stringToReservedWord(commandToken)); it != m_commands.end())
     {
         it->second(args);
         return true;
@@ -114,7 +115,7 @@ std::tuple<bool, std::string, std::string> REPL::parse_args(const std::string& s
 
     std::string args;
     std::getline(iss, args);
-    if (const size_t firstNonSpace{ args.find_first_not_of(" \t") }; firstNonSpace != std::string::npos)
+    if (const size_t firstNonSpace = args.find_first_not_of(" \t"); firstNonSpace != std::string::npos)
         args = args.substr(firstNonSpace);
     else
         args.clear();

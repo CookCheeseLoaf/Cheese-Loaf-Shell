@@ -9,7 +9,7 @@
 
 void RemoveCommand::execute(const std::string& args)
 {
-    auto [valid, current_file] { parse_args(args) };
+    auto [valid, current_file] = parse_args(args);
     if (!valid) return;
 
     if (fs::is_directory(current_file))

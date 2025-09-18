@@ -6,7 +6,7 @@
 template <typename MapType>
 bool executeCommandIfExists(ReservedWords word, const std::string& args, MapType& commands)
 {
-    if (const auto it{ commands.find(word) }; it != commands.end() && it->second)
+    if (const auto it = commands.find(word); it != commands.end() && it->second)
     {
         it->second(args);
         return true;

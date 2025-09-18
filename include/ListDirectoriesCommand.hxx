@@ -8,7 +8,7 @@ class ListDirectoriesCommand final : public Command
 {
 public:
     void execute(const std::string& args) override;
-    std::unique_ptr<Command> clone() const override;
+    [[nodiscard]] std::unique_ptr<Command> clone() const override;
 
 private:
     static void PrintEntry(const fs::directory_entry& entry);
