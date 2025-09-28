@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.28.3)
-project(clshell LANGUAGES C CXX)
+project(lshell LANGUAGES C CXX)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_BUILD_TYPE Release)
 
@@ -17,9 +17,11 @@ set(SOURCES
         src/command_src/RemoveCommand.cxx
         src/command_src/RemoveDirectoriesCommand.cxx
         src/command_src/RenameCommand.cxx
+        include/ParsedCmd.hxx
+        include/StringUtils.hxx
 )
 
-add_executable(clshell ${SOURCES})
+add_executable(lshell ${SOURCES})
 include_directories(include)
 
 find_package(Threads REQUIRED)
@@ -28,7 +30,21 @@ find_package(replxx REQUIRED)
 
 if(replxx_FOUND)
     message(STATUS "Found replxx package")
-    target_link_libraries(clshell PRIVATE replxx::replxx)
+    target_link_libraries(lshell PRIVATE replxx::replxx)
 endif()
 
-install(TARGETS clshell DESTINATION bin)
+if (MSVC)
+    target_compile_options(lshell PRIVATE
+            /W4     # warning level 4
+            /WX     # treat all warnings into errors
+            /permissive-
+            /we4244 # 'conversion' conversion from 'type1' to 'type2', possible loss of data
+            /we4267 # 'var' : conversion from 'size_t' to 'type', possible loss of data
+            /we4305 # errors for floating point issues
+            /we4838 # conversion from 'type_1' to 'type_2' requires a narrowing conversion
+    )
+else()
+    target_compile_options(lshell PRIVATE -Wconversion -Wall -Werror)
+endif()
+
+install(TARGETS lshell DESTINATION bin)

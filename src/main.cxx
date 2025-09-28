@@ -4,6 +4,7 @@
 #include <string>
 
 #include "ANSI.hxx"
+#include "FileSystemUtils.hxx"
 #include "REPL.hxx"
 
 int main()
@@ -16,7 +17,13 @@ int main()
 
 	while (true)
 	{
-		const char* cinput = rexx.input(ansi::withForeground(">>> ", ansi::Foreground::MAGENTA));
+		const std::string home = FileSystemUtils::get_home_directory();
+		std::string directory = REPL::get_dir() + ansi::withForeground(">>> ", ansi::Foreground::MAGENTA);
+		if (directory.find(home) == 0)
+			directory = ansi::withForeground(home, ansi::Foreground::GREEN) +
+						directory.substr(home.size());
+
+		const char* cinput = rexx.input(directory);
 		if (!cinput)
 			break;
 

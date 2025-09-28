@@ -3,7 +3,9 @@
 
 #include "CommandShell.hxx"
 #include "FileSystemUtils.hxx"
-#include <tuple>
+#include <optional>
+#include <vector>
+#include <utility>
 #include <memory>
 
 class RemoveCommand final : public Command
@@ -13,7 +15,8 @@ public:
     [[nodiscard]] std::unique_ptr<Command> clone() const override;
 
 private:
-    static std::tuple<bool, fs::path> parse_args(const std::string& args);
+    static std::optional<std::pair<std::string, fs::path>> parse_args(const std::string& args, std::string& err);
+    static std::vector<std::string> split_quoted_args(const std::string&);
 };
 
 #endif

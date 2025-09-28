@@ -65,23 +65,13 @@ REPL::REPL()
     m_commands[ReservedWords::EXIT] =   [](std::string const&) { std::exit(0); };
     m_commands[ReservedWords::PRINT] =   [](const std::string& args) { std::cout << args << '\n'; };
     m_commands[ReservedWords::CLEAR] =  [](std::string const&) { std::cout << ansi::CLEAR_SCREEN; };
-    m_commands[ReservedWords::VER] =    [](const std::string&) {
-        std::cout << R"(
-   _____ _                           _                  __    _____ _          _ _
-  / ____| |                         | |                / _|  / ____| |        | | |
- | |    | |__   ___  ___  ___  ___  | |     ___   __ _| |_  | (___ | |__   ___| | |
- | |    | '_ \ / _ \/ _ \/ __|/ _ \ | |    / _ \ / _` |  _|  \___ \| '_ \ / _ \ | |
- | |____| | | |  __/  __/\__ \  __/ | |___| (_) | (_| | |    ____) | | | |  __/ | |
-  \_____|_| |_|\___|\___||___/\___| |______\___/ \__,_|_|   |_____/|_| |_|\___|_|_|)" << '\n';
-
-        std::cout << "Cheese Loaf Shell (version: 0.01)\n";
-    };
     m_commands[ReservedWords::WHEREAMI] = [](const std::string&) { std::cout << get_dir() << '\n'; };
 
     m_commands[ReservedWords::SHOW] =   show_command;
     m_commands[ReservedWords::PAUSE] =  portable_getch;
     m_commands[ReservedWords::HELP] =   help_command;
     m_commands[ReservedWords::TOUCH] =  touch_command;
+    m_commands[ReservedWords::VER] =    version_command;
 
     m_commands[ReservedWords::CD] =     m_commands[ReservedWords::CHDIR];
     m_commands[ReservedWords::CLS] =    m_commands[ReservedWords::CLEAR];
@@ -94,8 +84,10 @@ REPL::REPL()
 
 bool REPL::operator()(const std::string& str)
 {
-    auto [valid, commandToken, args] = parse_args(str);
-    if (!valid) return false;
+    auto parsed = parse_args_opt(str);
+    if (!parsed) return false;
+
+    auto [commandToken, args] = *parsed;
 
     if (const auto it = m_commands.find(stringToReservedWord(commandToken)); it != m_commands.end())
     {
@@ -105,23 +97,27 @@ bool REPL::operator()(const std::string& str)
     return false;
 }
 
-std::tuple<bool, std::string, std::string> REPL::parse_args(const std::string& str)
+std::optional<ParsedCmd> REPL::parse_args_opt(const std::string& input)
 {
-    std::istringstream iss{ str };
-    std::string commandToken;
-
-    if (!(iss >> commandToken))
-        return { false, {}, {} };
-
+    std::istringstream iss{ input };
+    std::string cmd;
+    if (!(iss >> cmd)) return std::nullopt;
     std::string args;
     std::getline(iss, args);
-    if (const size_t firstNonSpace = args.find_first_not_of(" \t"); firstNonSpace != std::string::npos)
-        args = args.substr(firstNonSpace);
-    else
-        args.clear();
 
-    std::transform(commandToken.begin(), commandToken.end(), commandToken.begin(), toupper);
-    return { true, commandToken, args };
+    auto trim = [](const std::string& s) -> std::string
+    {
+        const auto first = s.find_first_not_of(" \t\r\n");
+        if (first == std::string::npos) return {};
+        const auto last = s.find_last_not_of(" \t\r\n");
+        return s.substr(first, last - first + 1);
+    };
+    args = trim(args);
+
+    std::transform(cmd.begin(), cmd.end(), cmd.begin(),
+        [](const unsigned char c) { return static_cast<char>(std::toupper(c)); });
+
+    return ParsedCmd{ std::move(cmd), std::move(args) };
 }
 
 std::string REPL::get_dir()

@@ -9,5 +9,6 @@
 void help_command(const std::string&);
 void touch_command(const std::string&);
 void show_command(const std::string&);
+void version_command(const std::string&);
 
 #endif //SHELL_FUNCTIONCOMMANDS_HXX

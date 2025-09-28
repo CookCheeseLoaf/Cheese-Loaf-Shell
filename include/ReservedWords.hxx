@@ -129,6 +129,7 @@ constexpr const char* informationAboutReservedWords(const ReservedWords word)
         case ReservedWords::CHDIR:
         case ReservedWords::CD: return "Change current directories.";
         case ReservedWords::WHEREAMI: return "Show the current directories.";
+        case ReservedWords::PAUSE: return "Delays the shell until you press any keys.";
         default: return "UNKNOWN.";
     }
 }

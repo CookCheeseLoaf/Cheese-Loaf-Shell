@@ -18,7 +18,7 @@ void RemoveDirectoriesCommand::execute(const std::string& args)
 
     try
     {
-        dir = fs::u8path(args);
+        dir = fs::path(args);
     }
     catch (const fs::filesystem_error&)
     {

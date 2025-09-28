@@ -2,6 +2,11 @@
 #define REPL_HXX
 #include "ReservedWords.hxx"
 #include <tuple>
+#include <map>
+#include <functional>
+#include <optional>
+
+#include "ParsedCmd.hxx"
 
 template <typename MapType>
 bool executeCommandIfExists(ReservedWords word, const std::string& args, MapType& commands)
@@ -21,9 +26,10 @@ public:
 
 private:
     std::map<ReservedWords, std::function<void(std::string const&)>> m_commands;
-    static std::tuple<bool, std::string, std::string> parse_args(std::string const&);
+    static std::optional<ParsedCmd> parse_args_opt(std::string const& input);
 public:
     static std::string get_dir();
+    static constexpr int MAJOR = 0, MINOR = 1, PATCH = 0;
 };
 
 #endif
