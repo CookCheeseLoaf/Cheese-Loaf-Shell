@@ -4,7 +4,6 @@
 
 #include "CopyCommand.hxx"
 #include <iostream>
-#include <algorithm>
 
 #include "StringUtils.hxx"
 
@@ -35,9 +34,9 @@ void CopyCommand::execute(const std::string& args)
         else
             fs::copy(source, destination, fs::copy_options::overwrite_existing);
     }
-    catch (const fs::filesystem_error& e)
+    catch (const fs::filesystem_error& _)
     {
-        std::cerr << "Error renaming file: " << e.what() << '\n';
+        std::cerr << "Error renaming file: " << err << '\n';
     }
 }
 
