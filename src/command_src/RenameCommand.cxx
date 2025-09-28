@@ -1,22 +1,28 @@
 #include "RenameCommand.hxx"
-#include <sstream>
 #include <iostream>
 #include <vector>
 
 void RenameCommand::execute(const std::string& args)
 {
-    auto [valid, current_file, new_file] = parse_args(args);
-    if (!valid) return;
-
-    if (!fs::exists(current_file))
+    std::string err;
+    auto p = parse_args(args, err);
+    if (!p)
     {
-        std::cerr << "The system cannot find the path specified: " << current_file << '\n';
+        std::cout << err << '\n';
+        return;
+    }
+
+    auto [source, destination] = *p;
+
+    if (!fs::exists(source))
+    {
+        std::cerr << "The system cannot find the path specified: " << source << '\n';
         return;
     }
 
     try
     {
-        fs::rename(current_file, new_file);
+        fs::rename(source, destination);
     }
     catch (const fs::filesystem_error& e)
     {
@@ -29,18 +35,34 @@ std::unique_ptr<Command> RenameCommand::clone() const
     return std::make_unique<RenameCommand>(*this);
 }
 
-std::tuple<bool, fs::path, fs::path> RenameCommand::parse_args(const std::string& args)
+std::optional<std::pair<fs::path, fs::path>> RenameCommand::parse_args(const std::string& args, std::string& err)
 {
-    std::istringstream iss{ args };
-    std::vector<std::string> tokens;
-    std::string token;
-    while (iss >> token) tokens.push_back(token);
+    const auto tokens = split_quoted_args(args);
 
     if (tokens.size() != 2)
     {
-        std::cerr << "The syntax of the command is incorrect. Usage: RENAME <old> <new>\n";
-        return { false, {}, {} };
+        err = "The syntax of the command is incorrect. Usage: RENAME <old> <new>";
+        return std::nullopt;
     }
 
-    return { true, fs::path{ tokens[0] }, fs::path{ tokens[1] } };
+    return std::make_pair( fs::path{ tokens[0] }, fs::path{ tokens[1] } );
+}
+
+
+std::vector<std::string> RenameCommand::split_quoted_args(const std::string& s)
+{
+    std::vector<std::string> tokens;
+    std::string cur;
+    bool inq = false;
+    for (const char ch : s)
+    {
+        if (ch == '"') { inq = !inq; continue; }
+        if (std::isspace(static_cast<unsigned char>(ch)) && !inq)
+        {
+            if (!cur.empty()) { tokens.push_back(cur); cur.clear(); }
+        }
+        else cur.push_back(ch);
+    }
+    if (!cur.empty()) tokens.push_back(cur);
+    return tokens;
 }
