@@ -21,35 +21,7 @@
 #include "RemoveCommand.hxx"
 #include "ChangeDirectoriesCommand.hxx"
 #include "ListDirectoriesCommand.hxx"
-
-#if defined(_WIN32) || defined(_WIN64)
-#include <conio.h>
-static int portable_getch(const std::string&)
-{
-    std::cout << "Press any key to continue." << '\n';
-    return _getch();
-}
-#else
-#include <unistd.h>
-#include <termios.h>
-#include <cstdio>
-
-inline int portable_getch(const std::string&)
-{
-    std::cout << "Press any key to continue." << '\n';
-    struct termios oldt, newt;
-    if (tcgetattr(STDIN_FILENO, &oldt) != 0) return EOF;
-    newt = oldt;
-    newt.c_lflag &= ~(ICANON | ECHO);
-    if (tcsetattr(STDIN_FILENO, TCSAFLUSH, &newt) != 0) return EOF;
-    unsigned char ch{};
-    ssize_t n{ read(STDIN_FILENO, &ch, 1) };
-    tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
-    if (n <= 0) return EOF;
-    return static_cast<int>(ch);
-}
-#endif
-
+#include "portable_getch.h"
 
 REPL::REPL()
 {
@@ -66,9 +38,9 @@ REPL::REPL()
     m_commands[ReservedWords::PRINT] =   [](const std::string& args) { std::cout << args << '\n'; };
     m_commands[ReservedWords::CLEAR] =  [](std::string const&) { std::cout << ansi::CLEAR_SCREEN; };
     m_commands[ReservedWords::WHEREAMI] = [](const std::string&) { std::cout << get_dir() << '\n'; };
+    m_commands[ReservedWords::PAUSE] =  [](const std::string&) { portable_getch(); };
 
     m_commands[ReservedWords::SHOW] =   show_command;
-    m_commands[ReservedWords::PAUSE] =  portable_getch;
     m_commands[ReservedWords::HELP] =   help_command;
     m_commands[ReservedWords::TOUCH] =  touch_command;
     m_commands[ReservedWords::VER] =    version_command;
@@ -114,8 +86,8 @@ std::optional<ParsedCmd> REPL::parse_args_opt(const std::string& input)
     };
     args = trim(args);
 
-    std::transform(cmd.begin(), cmd.end(), cmd.begin(),
-        [](const unsigned char c) { return static_cast<char>(std::toupper(c)); });
+    std::ranges::transform(cmd, cmd.begin(),
+                           [](const unsigned char c) { return static_cast<char>(std::toupper(c)); });
 
     return ParsedCmd{ std::move(cmd), std::move(args) };
 }
