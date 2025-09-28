@@ -19,6 +19,8 @@ set(SOURCES
         src/command_src/RenameCommand.cxx
         include/ParsedCmd.hxx
         include/StringUtils.hxx
+        src/portable_getch.c
+        include/portable_getch.h
 )
 
 add_executable(lshell ${SOURCES})
