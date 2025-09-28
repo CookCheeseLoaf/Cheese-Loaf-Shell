@@ -13,7 +13,7 @@ int portable_getch()
     printf("Press any key to continue...");
     fflush(stdout);
     const int ch = _getch();
-    puts("");
+    puts("\r\n");
     return ch;
 }
 
@@ -23,7 +23,7 @@ int portable_getch()
 
 int portable_getch()
 {
-    printf("Press any key to continue...\n");
+    printf("Press any key to continue...");
     fflush(stdout);
 
     struct termios oldt, newt;
@@ -39,7 +39,7 @@ int portable_getch()
     tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
     if (n <= 0) return EOF;
 
-    puts("");
+    puts("\n");
     return (int)ch;
 }
 #endif
