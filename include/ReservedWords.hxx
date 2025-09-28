@@ -39,7 +39,7 @@ enum class ReservedWords : unsigned char {
 
 inline ReservedWords stringToReservedWord(const std::string& str)
 {
-    static const std::map<std::string, ReservedWords> stringToEnum
+    static const std::map<std::string, ReservedWords> stringToEnum =
     {
         {"DIR",     ReservedWords::DIR},
         {"CD",      ReservedWords::CD},
