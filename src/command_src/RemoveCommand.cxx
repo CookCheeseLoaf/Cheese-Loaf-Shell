@@ -31,8 +31,8 @@ void RemoveCommand::execute(const std::string& args)
 
     try
     {
-        const std::string opt_upper = option;
-        make_upper(option);
+        std::string opt_upper = option;
+        make_upper(opt_upper);
         if (option == "-r" || opt_upper == "--RECURSIVE")
             fs::remove_all(source);
         else
@@ -56,7 +56,7 @@ RemoveCommand::parse_args(const std::string& args, std::string& err)
 
     if (tokens.size() != 1 && tokens.size() != 2)
     {
-        err = "Usage: remove [--recursive | -r] <source>";
+        err = "The syntax of the command is incorrect. Usage: remove [--recursive | -r] <source>";
         return std::nullopt;
     }
 
@@ -72,8 +72,8 @@ RemoveCommand::parse_args(const std::string& args, std::string& err)
             valid = true;
         else
         {
-            const std::string opt_upper = option;
-            make_upper(option);
+            std::string opt_upper = option;
+            make_upper(opt_upper);
             if (opt_upper == "--RECURSIVE")
                 valid = true;
         }
