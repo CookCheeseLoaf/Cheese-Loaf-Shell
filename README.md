@@ -9,10 +9,10 @@ You are welcome to help if you want. :-)
 
 ---
 ### How to build it?
-the shell is written in C++20, so you need a compiler that support C++17 directly.
+the shell is written in C++20, so you need a compiler that support C++20 directly.
 
 Before you could build it, you would **obviously** need dependencies.
-+ Compiler (GCC/Clang/MSVC) Make sure it support C++17, otherwise it would refuse to build.
++ Compiler (GCC/Clang/MSVC) Make sure it support C++20, otherwise it would refuse to build.
 + [Replxx](https://github.com/AmokHuginnsson/replxx) (static build `.a` required)
 
 ```cmake
