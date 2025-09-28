@@ -4,7 +4,6 @@
 
 #include "RemoveCommand.hxx"
 #include <iostream>
-#include <algorithm>
 #include "StringUtils.hxx"
 
 void RemoveCommand::execute(const std::string& args)
@@ -41,7 +40,7 @@ void RemoveCommand::execute(const std::string& args)
     }
     catch (const fs::filesystem_error& e)
     {
-        std::cerr << "Error removing file: " << e.what() << '\n';
+    std::cerr << "Error removing file '" << source << "': " << e.what() << '\n';
     }
 }
 
