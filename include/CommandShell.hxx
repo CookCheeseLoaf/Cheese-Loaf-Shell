@@ -11,7 +11,7 @@
 struct Command
 {
     virtual ~Command() = default;
-    virtual void execute(const std::string& args) = 0;
+    virtual void execute(std::string const& /* args */) = 0;
     [[nodiscard]] virtual std::unique_ptr<Command> clone() const = 0;
 };
 
@@ -24,17 +24,17 @@ struct CommandCallable
 
     CommandCallable(CommandCallable&&) noexcept = default;
     CommandCallable& operator=(CommandCallable&&) noexcept = default;
-    CommandCallable(const CommandCallable& other) :
+    CommandCallable(CommandCallable const& other) :
         ptr{ other.ptr ? other.ptr->clone() : nullptr } {}
 
-    CommandCallable& operator=(const CommandCallable& other)
+    CommandCallable& operator=(CommandCallable const& other)
     {
         if (this != &other)
             ptr = other.ptr ? other.ptr->clone() : nullptr;
         return *this;
     }
 
-    void operator()(const std::string& args) const
+    void operator()(std::string const& args) const
     {
         if (ptr) ptr->execute(args);
         else std::cerr << "Command object empty.\n";

@@ -6,9 +6,9 @@
 #define SHELL_FUNCTIONCOMMANDS_HXX
 #include <string>
 
-void help_command(const std::string&);
-void touch_command(const std::string&);
-void show_command(const std::string&);
-void version_command(const std::string&);
+void help_command(std::string const& /* args */);
+void touch_command(std::string const& /* args */);
+void show_command(std::string const& /* args */);
+void version_command(std::string const& /* args */);
 
 #endif //SHELL_FUNCTIONCOMMANDS_HXX

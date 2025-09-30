@@ -15,8 +15,9 @@ public:
     [[nodiscard]] std::unique_ptr<Command> clone() const override;
 
 private:
-    static std::optional<std::pair<std::string, fs::path>> parse_args(const std::string& args, std::string& err);
-    static std::vector<std::string> split_quoted_args(const std::string&);
+    using two_paths = std::pair<fs::path, fs::path>;
+    static std::optional<two_paths> parse_args(const std::string& /* args */, std::string& /* err */);
+    static std::vector<std::string> split_quoted_args(const std::string& /* args */);
 };
 
 #endif

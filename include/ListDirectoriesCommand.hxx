@@ -11,8 +11,8 @@ public:
     [[nodiscard]] std::unique_ptr<Command> clone() const override;
 
 private:
-    static void PrintEntry(const fs::directory_entry& entry);
-    static std::string DetermineColor(const fs::directory_entry& entry);
+    static void PrintEntry(fs::directory_entry const& /* entry */);
+    static std::string DetermineColor(fs::directory_entry const& /* entry */);
 };
 
 #endif

@@ -8,13 +8,14 @@
 #include <tuple>
 #include <optional>
 
-class CopyCommand final : public Command {
+class CopyCommand final : public Command
+{
 public:
-	void execute(const std::string& args) override;
+	void execute(std::string const& /* args */) override;
     [[nodiscard]] std::unique_ptr<Command> clone() const override;
 private:
-    static std::optional<std::tuple<std::string, fs::path, fs::path>> parse_args(const std::string& args, std::string& err);
-    static std::vector<std::string> split_quoted_args(const std::string&);
+    static std::optional<std::tuple<std::string, fs::path, fs::path>> parse_args(std::string const& /* args */, std::string& /* err */);
+    static std::vector<std::string> split_quoted_args(std::string const& /* args */);
 };
 
 #endif

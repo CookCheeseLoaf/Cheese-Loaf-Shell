@@ -2,7 +2,6 @@
 #define ANSI_HXX
 
 #include <string>
-#include <string_view>
 
 namespace ansi
 {
@@ -46,8 +45,8 @@ namespace ansi
 		BRIGHT_WHITE
 	};
 
-	inline constexpr auto RESET{ "\033[0m" };
-	inline constexpr auto CLEAR_SCREEN{ "\033[2J\033[H" };
+	inline constexpr auto RESET = "\033[0m";
+	inline constexpr auto CLEAR_SCREEN = "\033[2J\033[H";
 
 	inline std::string foreground(Foreground fg)
 	{
@@ -59,12 +58,12 @@ namespace ansi
 		return "\033[" + std::to_string(static_cast<unsigned char>(bg)) + "m";
 	}
 
-	inline std::string withBackground(const std::string& str, const Background bg)
+	inline std::string withBackground(std::string const& str, const Background bg)
 	{
 		return background(bg) + str + RESET;
 	}
 
-	inline std::string withForeground(const std::string& str, const Foreground fg)
+	inline std::string withForeground(std::string const& str, const Foreground fg)
 	{
 		return foreground(fg) + str + RESET;
 	}

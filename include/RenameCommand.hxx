@@ -2,9 +2,9 @@
 #define SHELL_RENAME_COMMAND_HXX
 
 #include "CommandShell.hxx"
-#include <tuple>
 #include "FileSystemUtils.hxx"
 #include <memory>
+#include <utility>
 
 class RenameCommand final: public Command
 {
@@ -13,7 +13,8 @@ public:
     [[nodiscard]] std::unique_ptr<Command> clone() const override;
 
 private:
-    static std::optional<std::pair<fs::path, fs::path>> parse_args(const std::string& args, std::string& err);
+    using two_paths = std::pair<fs::path, fs::path>;
+    static std::optional<two_paths> parse_args(const std::string& /* args */, std::string& /* err */);
     static std::vector<std::string> split_quoted_args(const std::string& s);
 };
 

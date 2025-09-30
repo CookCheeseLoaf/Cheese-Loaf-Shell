@@ -19,17 +19,21 @@ bool executeCommandIfExists(ReservedWords word, const std::string& args, MapType
     return false;
 }
 
-class REPL {
+class REPL final
+{
 public:
     REPL();
-    bool operator()(const std::string& str);
+    bool operator()(std::string_view /* input */);
+    [[nodiscard]] static std::optional<ParsedCmd> parse_args(std::string_view /* input */);
+    static std::string get_dir();
+    static constexpr int MAJOR = 0;
+    static constexpr int MINOR = 1;
+    static constexpr int PATCH = 0;
 
 private:
-    std::map<ReservedWords, std::function<void(std::string const&)>> m_commands;
-    static std::optional<ParsedCmd> parse_args_opt(std::string const& input);
-public:
-    static std::string get_dir();
-    static constexpr int MAJOR = 0, MINOR = 1, PATCH = 0;
+    using CommandFn = std::function<void(std::string_view)>;
+    std::map<ReservedWords, CommandFn> m_commands;
 };
+
 
 #endif

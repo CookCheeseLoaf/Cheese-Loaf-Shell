@@ -7,7 +7,7 @@
 class RemoveDirectoriesCommand final : public Command
 {
 public:
-	void execute(const std::string& args) override;
+	void execute(std::string const& /* args */) override;
 	[[nodiscard]] std::unique_ptr<Command> clone() const override;
 };
 

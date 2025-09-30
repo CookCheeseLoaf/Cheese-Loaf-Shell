@@ -6,7 +6,8 @@
 #define LSHELL_PORTABLE_GETCH_H
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
     int portable_getch();
