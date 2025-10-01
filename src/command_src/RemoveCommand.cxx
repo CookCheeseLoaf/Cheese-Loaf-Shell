@@ -40,7 +40,7 @@ void RemoveCommand::execute(const std::string& args)
     }
     catch (const fs::filesystem_error& e)
     {
-    std::cerr << "Error removing file '" << source << "': " << e.what() << '\n';
+        std::cerr << "Error removing file '" << source << "': " << e.what() << '\n';
     }
 }
 
@@ -94,8 +94,6 @@ RemoveCommand::parse_args(const std::string& args, std::string& err)
 
     return std::make_pair(option, source);
 }
-
-
 
 std::vector<std::string> RemoveCommand::split_quoted_args(const std::string& s)
 {

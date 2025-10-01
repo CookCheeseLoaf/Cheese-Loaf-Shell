@@ -36,7 +36,7 @@ void CopyCommand::execute(const std::string& args)
     }
     catch (const fs::filesystem_error& e)
     {
-        std::cerr << "Error renaming file: " << source << "': " << e.what() << '\n';
+        std::cerr << "Error renaming file '" << source << "': " << e.what() << '\n';
     }
 }
 
