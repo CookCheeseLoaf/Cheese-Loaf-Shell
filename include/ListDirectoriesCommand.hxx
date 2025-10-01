@@ -7,7 +7,7 @@
 class ListDirectoriesCommand final : public Command
 {
 public:
-    void execute(const std::string& args) override;
+    void execute(const std::string& /* args */) override;
     [[nodiscard]] std::unique_ptr<Command> clone() const override;
 
 private:
