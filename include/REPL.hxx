@@ -29,6 +29,7 @@ public:
     static constexpr int MAJOR = 0;
     static constexpr int MINOR = 1;
     static constexpr int PATCH = 0;
+    static ParsedCmd parsed_command;
 
 private:
     using CommandFn = std::function<void(std::string_view)>;

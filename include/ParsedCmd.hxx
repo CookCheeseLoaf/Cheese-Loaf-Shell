@@ -9,7 +9,7 @@
 struct ParsedCmd
 {
     std::string command;
-    std::string args;
+    std::vector<std::string> args;
 };
 
 #endif //CLSHELL_PARSEDCMD_HXX

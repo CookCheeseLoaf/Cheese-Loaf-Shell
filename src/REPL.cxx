@@ -69,9 +69,9 @@ bool REPL::operator()(const std::string& str)
     return false;
 }
 
-std::optional<ParsedCmd> REPL::parse_args_opt(const std::string& input)
+std::optional<ParsedCmd> REPL::parse_args(std::string_view input)
 {
-    std::istringstream iss{ input };
+    std::istringstream iss{ std::string(input) };
     std::string cmd;
     if (!(iss >> cmd)) return std::nullopt;
     std::string args;
@@ -89,6 +89,11 @@ std::optional<ParsedCmd> REPL::parse_args_opt(const std::string& input)
     std::ranges::transform(cmd, cmd.begin(),
                            [](const unsigned char c) { return static_cast<char>(std::toupper(c)); });
 
+    parsed_command.command = cmd;
+
+    for ()
+
+    parsed_command = ParsedCmd{ cmd, args };
     return ParsedCmd{ std::move(cmd), std::move(args) };
 }
 

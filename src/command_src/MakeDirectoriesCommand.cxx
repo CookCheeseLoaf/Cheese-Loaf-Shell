@@ -56,14 +56,13 @@ MakeDirectoriesCommand::parse_args(const std::string& args, std::string& err)
 {
     const auto tokens = split_quoted_args(args);
 
-    if (tokens.size() != 1 && tokens.size() != 2)
+    if (tokens.size() != 1)
     {
-        err = "The syntax of the command is incorrect. Usage: remove [--recursive | -r] <source>";
+        err = "The syntax of the command is incorrect. Usage: MKDIR <source>";
         return std::nullopt;
     }
 
-    std::string option;
-    fs::path source, destination;
+    fs::path source;
 
     if (tokens.size() == 2)
     {
