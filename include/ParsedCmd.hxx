@@ -12,6 +12,8 @@ struct ParsedCmd
     std::string command;
     std::vector<std::string_view> args;
 
+    ParsedCmd() = default;
+
     ParsedCmd(std::string_view command, std::vector<std::string_view> args)
     {
         this->command = command;

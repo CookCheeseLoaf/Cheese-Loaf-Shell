@@ -26,33 +26,33 @@
 
 REPL::REPL()
 {
-    m_commands[ReservedWords::DIR] =    [](arguments const& args) { ListDirectoriesCommand{}.execute(args); };
-    m_commands[ReservedWords::CHDIR] =  [](arguments const& args) { ChangeDirectoriesCommand{}.execute(args); };
-    m_commands[ReservedWords::COPY] =   [](arguments const& args) { CopyCommand{}.execute(args); };
-    m_commands[ReservedWords::DELETE] = [](arguments const& args) { RemoveCommand{}.execute(args); };
+    m_commands[ReservedWords::DIR] = [](arguments const &args) { ListDirectoriesCommand{}.execute(args); };
+    m_commands[ReservedWords::CHDIR] = [](arguments const &args) { ChangeDirectoriesCommand{}.execute(args); };
+    m_commands[ReservedWords::COPY] = [](arguments const &args) { CopyCommand{}.execute(args); };
+    m_commands[ReservedWords::DELETE] = [](arguments const &args) { RemoveCommand{}.execute(args); };
 
-    m_commands[ReservedWords::MKDIR] =  [](arguments const& args) { MakeDirectoriesCommand{}.execute(args); };
-    m_commands[ReservedWords::RMDIR] =  [](arguments const& args) { RemoveDirectoriesCommand{}.execute(args); };
-    m_commands[ReservedWords::RENAME] = [](arguments const& args) { RenameCommand{}.execute(args); };
+    m_commands[ReservedWords::MKDIR] = [](arguments const &args) { MakeDirectoriesCommand{}.execute(args); };
+    m_commands[ReservedWords::RMDIR] = [](arguments const &args) { RemoveDirectoriesCommand{}.execute(args); };
+    m_commands[ReservedWords::RENAME] = [](arguments const &args) { RenameCommand{}.execute(args); };
 
-    m_commands[ReservedWords::EXIT] =   [](arguments const&) { std::exit(0); };
-    m_commands[ReservedWords::PRINT] =   [](arguments const& args) { std::cout << args << '\n'; };
-    m_commands[ReservedWords::CLEAR] =  [](arguments const&) { std::cout << ansi::CLEAR_SCREEN; };
-    m_commands[ReservedWords::WHEREAMI] = [](arguments const&) { std::cout << get_dir() << '\n'; };
-    m_commands[ReservedWords::PAUSE] =  [](arguments const&) { portable_getch(); };
+    m_commands[ReservedWords::EXIT] = [](arguments const &) { std::exit(0); };
+    m_commands[ReservedWords::CLEAR] = [](arguments const &) { std::cout << ansi::CLEAR_SCREEN; };
+    m_commands[ReservedWords::WHEREAMI] = [](arguments const &) { std::cout << get_dir() << '\n'; };
+    m_commands[ReservedWords::PAUSE] = [](arguments const &) { portable_getch(); };
 
-    m_commands[ReservedWords::SHOW] =   show_command;
-    m_commands[ReservedWords::HELP] =   help_command;
-    m_commands[ReservedWords::TOUCH] =  touch_command;
-    m_commands[ReservedWords::VER] =    version_command;
+    m_commands[ReservedWords::SHOW] = show_command;
+    m_commands[ReservedWords::HELP] = help_command;
+    m_commands[ReservedWords::TOUCH] = touch_command;
+    m_commands[ReservedWords::VER] = version_command;
+    m_commands[ReservedWords::PRINT] = print_command;
 
-    m_commands[ReservedWords::CD] =     m_commands[ReservedWords::CHDIR];
-    m_commands[ReservedWords::CLS] =    m_commands[ReservedWords::CLEAR];
-    m_commands[ReservedWords::DEL] =    m_commands[ReservedWords::DELETE];
-    m_commands[ReservedWords::ERASE] =  m_commands[ReservedWords::DELETE];
-    m_commands[ReservedWords::MD] =     m_commands[ReservedWords::MKDIR];
-    m_commands[ReservedWords::RD] =     m_commands[ReservedWords::RMDIR];
-    m_commands[ReservedWords::REN] =    m_commands[ReservedWords::RENAME];
+    m_commands[ReservedWords::CD] = m_commands[ReservedWords::CHDIR];
+    m_commands[ReservedWords::CLS] = m_commands[ReservedWords::CLEAR];
+    m_commands[ReservedWords::DEL] = m_commands[ReservedWords::DELETE];
+    m_commands[ReservedWords::ERASE] = m_commands[ReservedWords::DELETE];
+    m_commands[ReservedWords::MD] = m_commands[ReservedWords::MKDIR];
+    m_commands[ReservedWords::RD] = m_commands[ReservedWords::RMDIR];
+    m_commands[ReservedWords::REN] = m_commands[ReservedWords::RENAME];
 }
 
 bool REPL::operator()(std::string_view str)
@@ -75,7 +75,7 @@ ParsedCmd REPL::parse_args(std::string_view input)
     std::string cmd = std::string(input.substr(0, space));
     std::string_view args_view = space == std::string_view::npos ? "" : input.substr(space + 1);
 
-    auto trim_view = [](std::string_view s) -> std::string_view
+    auto trim_view = [](const std::string_view s) -> std::string_view
     {
         const size_t first = s.find_first_not_of(" \t\r\n");
         if (first == std::string_view::npos) return {};

@@ -10,5 +10,6 @@ void help_command(arguments const& /* args */);
 void touch_command(arguments const& /* args */);
 void show_command(arguments const& /* args */);
 void version_command(arguments const& /* args */);
+void print_command(arguments const& /* args */);
 
 #endif //SHELL_FUNCTIONCOMMANDS_HXX

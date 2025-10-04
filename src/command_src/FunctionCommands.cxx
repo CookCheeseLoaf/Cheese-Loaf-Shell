@@ -81,3 +81,14 @@ void version_command(const std::string&)
               << "Minor:\t" << REPL::MINOR << '\n'
               << "Patch:\t" << REPL::PATCH << '\n';
 }
+
+void print_command(arguments const& args)
+{
+    for (auto it = args.begin(); it != args.end(); ++it)
+    {
+        std::cout << *it;
+        if (std::next(it) != args.end())
+            std::cout << ' ';
+    }
+    std::cout << '\n';
+}
