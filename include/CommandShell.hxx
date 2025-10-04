@@ -6,27 +6,47 @@
 #define SHELL_COMMAND_SHELL_HXX
 #include <memory>
 #include <iostream>
+#include <optional>
 #include <string_view>
 #include <vector>
 
-enum class CommandResult
+enum class CommandResult : int
 {
-    Success,
+    Success = 0,
+    Exit,
+    Failure,
     InvalidSyntax,
     AlreadyExists,
     PermissionDenied,
-    PathNotFound,
-    CommandFailed,
-    UnknownOption,
     AccessDenied,
+    PathNotFound,
+    UnknownOption,
     UnknownError
 };
+
+constexpr std::string_view to_string(CommandResult result)
+{
+    switch (result)
+    {
+        case CommandResult::Success:       return "Success";
+        case CommandResult::Exit:          return "Exit";
+        case CommandResult::Failure:       return "Failure";
+        case CommandResult::InvalidSyntax: return "Invalid syntax";
+        case CommandResult::AlreadyExists: return "Already exists";
+        case CommandResult::PermissionDenied: return "Permission denied";
+        case CommandResult::AccessDenied:  return "Access denied";
+        case CommandResult::PathNotFound:  return "Path not found";
+        case CommandResult::UnknownOption: return "Unknown option";
+        case CommandResult::UnknownError:  return "Unknown error";
+    }
+    return "Unknown CommandResult";
+}
 
 struct Command
 {
     virtual ~Command() = default;
-    [[nodiscard]] virtual CommandResult execute(std::vector<std::string_view> const& /* args */) = 0;
-    [[nodiscard]] virtual std::unique_ptr<Command> clone() const = 0;
+    [[nodiscard]] virtual CommandResult execute(std::vector<std::string> const& /* args */) = 0;
+	[[nodiscard]] virtual auto clone() const -> std::unique_ptr<Command> = 0;
 };
 
 struct CommandCallable
@@ -48,10 +68,13 @@ struct CommandCallable
         return *this;
     }
 
-    void operator()(std::vector<std::string_view> const& args) const
+    std::optional<CommandResult> operator()(std::vector<std::string> const& args) const
     {
-        if (ptr) ptr->execute(args);
-        else std::cerr << "Command object empty.\n";
+        if (ptr)
+            return ptr->execute(args);
+
+        std::cerr << "Command object empty.\n";
+        return std::nullopt;
     }
 
     Command* operator->() noexcept { return ptr.get(); }

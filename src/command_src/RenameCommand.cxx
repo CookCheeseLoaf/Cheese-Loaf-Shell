@@ -2,7 +2,7 @@
 #include <iostream>
 #include <vector>
 
-std::optional<std::pair<std::string_view, std::string_view>>
+std::optional<std::pair<std::string, std::string>>
 RenameCommand::parseArguments(arguments const& args, std::string& err)
 {
     if (args.size() != 2)
@@ -28,7 +28,7 @@ CommandResult RenameCommand::renamePath(fs::path const& source, fs::path const& 
     if (ec)
     {
         std::cerr << "Error renaming file: " << ec.message() << '\n';
-        return CommandResult::CommandFailed;
+        return CommandResult::Failure;
     }
 
     return CommandResult::Success;
@@ -49,7 +49,7 @@ CommandResult RenameCommand::execute(arguments const& args)
     return renamePath(source, destination);
 }
 
-std::unique_ptr<Command> RenameCommand::clone() const
+auto RenameCommand::clone() const -> std::unique_ptr<Command>
 {
     return std::make_unique<RenameCommand>(*this);
 }

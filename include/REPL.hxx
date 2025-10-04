@@ -4,6 +4,7 @@
 #include <map>
 #include <functional>
 
+#include "CommandShell.hxx"
 #include "ParsedCmd.hxx"
 #include "using_arguments.h"
 
@@ -22,9 +23,9 @@ class REPL final
 {
 public:
     REPL();
-    bool operator()(std::string_view /* input */);
-    static ParsedCmd parse_args(std::string_view /* input */);
-    static std::vector<std::string_view> split_quoted_args(std::string_view /* args */);
+    bool operator()(std::string const& /* input */);
+    static ParsedCmd parse_args(std::string const& /* input */);
+    static std::vector<std::string> split_quoted_args(std::string const& /* args */);
     static std::string get_dir();
     static constexpr int MAJOR = 0;
     static constexpr int MINOR = 1;
@@ -32,7 +33,7 @@ public:
     ParsedCmd parsed_command;
 
 private:
-    std::map<ReservedWords, std::function<void(arguments)>> m_commands;
+    std::map<ReservedWords, std::function<CommandResult(arguments const&)>> m_commands;
 };
 
 

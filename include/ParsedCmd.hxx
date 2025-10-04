@@ -10,11 +10,11 @@
 struct ParsedCmd
 {
     std::string command;
-    std::vector<std::string_view> args;
+    std::vector<std::string> args;
 
     ParsedCmd() = default;
 
-    ParsedCmd(std::string_view command, std::vector<std::string_view> args)
+    ParsedCmd(std::string const& command, std::vector<std::string> args)
     {
         this->command = command;
         this->args = std::move(args);

@@ -8,14 +8,13 @@
 class ChangeDirectoriesCommand final : public Command
 {
 public:
-	ChangeDirectoriesCommand();
+	ChangeDirectoriesCommand() = default;
     CommandResult execute(arguments const& /* args */) override;
-	[[nodiscard]] std::unique_ptr<Command> clone() const override;
-	[[nodiscard]] fs::path get_current_directory() const;
+	[[nodiscard]] auto clone() const -> std::unique_ptr<Command> override;
+	static [[nodiscard]] fs::path get_current_directory() ;
 
 private:
 	static bool validateArguments(arguments const& args);
-	fs::path current_directory;
 };
 
 #endif

@@ -2,7 +2,6 @@
 #include "StringUtils.hxx"
 #include <iostream>
 #include <algorithm>
-#include <ranges>
 
 bool RemoveCommand::isRecursiveOption(std::string_view option)
 {
@@ -10,7 +9,7 @@ bool RemoveCommand::isRecursiveOption(std::string_view option)
         return true;
 
     std::string upper(option);
-    std::ranges::transform(upper, upper.begin(), ::toupper);
+    std::ranges::transform(upper, upper.begin(), [](const unsigned char c) { return static_cast<unsigned char>(std::toupper(c)); });
     return upper == "--RECURSIVE";
 }
 
@@ -81,7 +80,7 @@ CommandResult RemoveCommand::execute(arguments const& args)
     return removePath(target, recursive);
 }
 
-std::unique_ptr<Command> RemoveCommand::clone() const
+auto RemoveCommand::clone() const -> std::unique_ptr<Command>
 {
     return std::make_unique<RemoveCommand>(*this);
 }

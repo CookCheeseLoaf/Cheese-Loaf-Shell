@@ -1,7 +1,3 @@
-//
-// Created by Loaf on 9/4/2025.
-//
-
 #include "RemoveDirectoriesCommand.hxx"
 #include <iostream>
 
@@ -15,7 +11,7 @@ bool RemoveDirectoriesCommand::validateArguments(arguments const& args)
     return true;
 }
 
-void RemoveDirectoriesCommand::reportError(std::error_code ec)
+void RemoveDirectoriesCommand::reportError(std::error_code const& ec)
 {
     switch (ec.value())
     {
@@ -30,7 +26,6 @@ void RemoveDirectoriesCommand::reportError(std::error_code ec)
             break;
     }
 }
-
 
 CommandResult RemoveDirectoriesCommand::removeDirectory(fs::path const& dir)
 {
@@ -49,49 +44,24 @@ CommandResult RemoveDirectoriesCommand::removeDirectory(fs::path const& dir)
     std::error_code ec;
     if (!fs::remove(dir, ec))
     {
-        if (ec == std::errc::directory_not_empty)
-            std::cerr << "The directory is not empty.\n";
-        else
-            std::cerr << "Error removing directory: " << ec.message() << '\n';
-
+        reportError(ec);
         return CommandResult::Failure;
     }
 
     return CommandResult::Success;
 }
 
-
 CommandResult RemoveDirectoriesCommand::execute(arguments const& args)
 {
     if (!validateArguments(args))
         return CommandResult::InvalidSyntax;
 
-    bool recursive = false;
-    fs::path directory;
-
-    if (args.size() == 1)
-    {
-        directory = args[0];
-    }
-    else
-    {
-        const auto& option = args[0];
-        if (option == "-r" || option == "--recursive")
-        {
-            recursive = true;
-            directory = args[1];
-        }
-        else
-        {
-            std::cerr << "Unknown option: " << option << '\n';
-            return CommandResult::UnknownOption;
-        }
-    }
+    fs::path directory = args[0];
 
     return removeDirectory(directory);
 }
 
-std::unique_ptr<Command> RemoveDirectoriesCommand::clone() const
+auto RemoveDirectoriesCommand::clone() const -> std::unique_ptr<Command>
 {
     return std::make_unique<RemoveDirectoriesCommand>(*this);
 }

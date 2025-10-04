@@ -7,7 +7,6 @@
 
 #include "CommandShell.hxx"
 #include <memory>
-#include <vector>
 #include "using_arguments.h"
 #include <filesystem>
 #include <string_view>

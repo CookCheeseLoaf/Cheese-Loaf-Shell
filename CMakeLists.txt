@@ -22,6 +22,10 @@ set(SOURCES
         src/portable_getch.c
         include/portable_getch.h
         include/using_arguments.h
+        include/get_console_width.h
+        src/get_console_width.c
+        include/ErrorPrinter.hxx
+        src/ErrorPrinter.cxx
 )
 
 add_executable(lshell ${SOURCES})

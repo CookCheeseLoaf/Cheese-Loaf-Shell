@@ -11,7 +11,7 @@ class RemoveCommand final : public Command
 {
 public:
     CommandResult execute(arguments const& args) override;
-    [[nodiscard]] std::unique_ptr<Command> clone() const override;
+    [[nodiscard]] auto clone() const -> std::unique_ptr<Command> override;
 
 private:
     static bool isRecursiveOption(std::string_view option);

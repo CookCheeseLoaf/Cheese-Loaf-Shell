@@ -4,12 +4,13 @@
 
 #ifndef SHELL_FUNCTIONCOMMANDS_HXX
 #define SHELL_FUNCTIONCOMMANDS_HXX
+#include "CommandShell.hxx"
 #include "using_arguments.h"
 
-void help_command(arguments const& /* args */);
-void touch_command(arguments const& /* args */);
-void show_command(arguments const& /* args */);
-void version_command(arguments const& /* args */);
-void print_command(arguments const& /* args */);
+CommandResult help_command(arguments const& /* args */);
+CommandResult touch_command(arguments const& /* args */);
+CommandResult show_command(arguments const& /* args */);
+CommandResult version_command(arguments const& /* args */);
+CommandResult print_command(arguments const& /* args */);
 
 #endif //SHELL_FUNCTIONCOMMANDS_HXX

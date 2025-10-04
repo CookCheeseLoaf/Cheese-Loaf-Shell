@@ -13,8 +13,8 @@ public:
 	[[nodiscard]] auto clone() const -> std::unique_ptr<Command> override;
 
 private:
-	static bool isRecursiveOption(std::string_view option);
-	static std::optional<std::pair<std::string_view, std::string_view>>
+	static bool isRecursiveOption(std::string const& option);
+	static std::optional<std::pair<std::string, std::string>>
 		parseArguments(arguments const& args, bool& recursive);
 	static CommandResult performCopy(fs::path const& source,
 									fs::path const& destination,

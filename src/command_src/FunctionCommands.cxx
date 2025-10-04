@@ -12,7 +12,7 @@
 
 #include "REPL.hxx"
 
-void help_command(std::string const&)
+CommandResult help_command(arguments const&)
 {
     for (uint8_t i = 0; i < static_cast<uint8_t>(ReservedWords::UNKNOWN); ++i)
     {
@@ -27,34 +27,37 @@ void help_command(std::string const&)
         << informationAboutReservedWords(w)
         << '\n';
     }
+    return CommandResult::Success;
 }
 
-void touch_command(const std::string& args)
+CommandResult touch_command(arguments const& args)
 {
-    if (args.empty())
+    if (args.size() != 1)
     {
         std::cerr << "The syntax of the command is incorrect. Usage: TOUCH <file>\n";
-        return;
+        return CommandResult::InvalidSyntax;
     }
 
-    if (fs::exists(fs::path{ args }))
-        return;
+    if (fs::exists(fs::path{ args[0] }))
+        return CommandResult::AlreadyExists;
 
-    std::ofstream{ args };
+    std::ofstream{ args[0].data() };
+    return CommandResult::Success;
 }
 
-void show_command(const std::string& args)
+CommandResult show_command(arguments const& args)
 {
-    if (args.empty())
+    if (args.size() != 1)
     {
         std::cerr << "The syntax of the command is incorrect. Usage: SHOW <file>\n";
-        return;
+        return CommandResult::InvalidSyntax;
     }
 
-    std::cout << std::ifstream{ args }.rdbuf() << '\n';
+    std::cout << std::ifstream{ args[0].data() }.rdbuf() << '\n';
+    return CommandResult::Success;
 }
 
-void version_command(const std::string&)
+CommandResult version_command(arguments const&)
 {
     char versionBuf[64];
     std::snprintf(versionBuf, sizeof(versionBuf), "%d.%d.%d",
@@ -80,9 +83,11 @@ void version_command(const std::string&)
               << "Major:\t" << REPL::MAJOR << '\n'
               << "Minor:\t" << REPL::MINOR << '\n'
               << "Patch:\t" << REPL::PATCH << '\n';
+
+    return CommandResult::Success;
 }
 
-void print_command(arguments const& args)
+CommandResult print_command(arguments const& args)
 {
     for (auto it = args.begin(); it != args.end(); ++it)
     {
@@ -91,4 +96,5 @@ void print_command(arguments const& args)
             std::cout << ' ';
     }
     std::cout << '\n';
+    return CommandResult::Success;
 }

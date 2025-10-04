@@ -4,9 +4,9 @@
 
 #ifndef LSHELL_USING_ARGUMENTS_H
 #define LSHELL_USING_ARGUMENTS_H
-#include <string_view>
+#include <string>
 #include <vector>
 
-typedef std::vector<std::string_view> arguments;
+typedef std::vector<std::string> arguments;
 
 #endif //LSHELL_USING_ARGUMENTS_H

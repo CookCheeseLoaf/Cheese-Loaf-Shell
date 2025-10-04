@@ -7,7 +7,6 @@
 
 #include <string>
 #include <map>
-#include <stdexcept>
 
 enum class ReservedWords : unsigned char {
     DIR,

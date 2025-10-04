@@ -9,6 +9,16 @@
 
 int main()
 {
+	try
+	{
+		const std::string home = FileSystemUtils::get_home_directory();
+		fs::current_path(home);
+	}
+	catch (const fs::filesystem_error& e)
+	{
+		std::cerr << "Warning: Could not set initial directory to home: " << e.what() << '\n';
+	}
+
 	replxx::Replxx rexx{};
 	REPL repl{};
 	std::ios::sync_with_stdio(false);
@@ -35,11 +45,13 @@ int main()
 
 		if (!repl(input))
 		{
-			std::string cmd;
-			std::istringstream{ input } >> cmd;
-			std::cerr << "Illegal command: " << cmd << '\n';
+			std::cout.flush();
 		}
 		else
+		{
 			std::cout.flush();
+		}
 	}
+
+	return 0;
 }

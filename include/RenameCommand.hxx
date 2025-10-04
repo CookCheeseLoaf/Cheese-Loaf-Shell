@@ -10,10 +10,10 @@ class RenameCommand final : public Command
 {
 public:
     CommandResult execute(arguments const& args) override;
-    [[nodiscard]] std::unique_ptr<Command> clone() const override;
+    [[nodiscard]] auto clone() const -> std::unique_ptr<Command> override;
 
 private:
-    static std::optional<std::pair<std::string_view, std::string_view>>
+    static std::optional<std::pair<std::string, std::string>>
         parseArguments(arguments const& args, std::string& err);
     static CommandResult renamePath(fs::path const& source, fs::path const& destination);
 };
