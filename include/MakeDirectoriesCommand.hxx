@@ -1,25 +1,29 @@
 //
 // Created by Loaf on 8/31/2025.
 //
+
 #ifndef SHELL_MAKE_DIRECTORIES_COMMAND_HXX
 #define SHELL_MAKE_DIRECTORIES_COMMAND_HXX
+
 #include "CommandShell.hxx"
 #include <memory>
-#include <optional>
 #include <vector>
+#include "using_arguments.h"
+#include <filesystem>
+#include <string_view>
+
+namespace fs = std::filesystem;
 
 class MakeDirectoriesCommand final : public Command
 {
 public:
-    void execute(std::string const& /* args */) override;
-    [[nodiscard]] std::unique_ptr<Command> clone() const override;
+    CommandResult execute(arguments const& args) override;
+    [[nodiscard]] auto clone() const -> std::unique_ptr<Command> override;
 
 private:
-    using two_paths = std::pair<fs::path, fs::path>;
-    static std::optional<two_paths> parse_args(std::string const& /* args */, std::string& /* err */);
-    static std::vector<std::string> split_quoted_args(std::string const& /* args */);
+    static bool validateArguments(arguments const& args);
+    static CommandResult createDirectory(std::string_view arg);
+    static void reportError(std::error_code ec);
 };
 
-
-
-#endif //SHELL_MAKE_DIRECTORIES_COMMAND_HXX
+#endif // SHELL_MAKE_DIRECTORIES_COMMAND_HXX

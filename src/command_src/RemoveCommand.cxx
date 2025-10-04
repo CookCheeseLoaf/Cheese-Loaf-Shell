@@ -1,114 +1,87 @@
-//
-// Created by Loaf on 9/4/2025.
-//
-
 #include "RemoveCommand.hxx"
-#include <iostream>
 #include "StringUtils.hxx"
+#include <iostream>
+#include <algorithm>
+#include <ranges>
 
-void RemoveCommand::execute(const std::string& args)
+bool RemoveCommand::isRecursiveOption(std::string_view option)
 {
-    std::string err;
-    auto p = parse_args(args, err);
-    if (!p)
-    {
-        std::cerr << err << '\n';
-        return;
-    }
-    auto [option, source] = *p;
+    if (option == "-r")
+        return true;
 
-    if (fs::is_directory(source))
-    {
-        std::cerr << "The specified path is not a file.\n";
-        return;
-    }
+    std::string upper(option);
+    std::ranges::transform(upper, upper.begin(), ::toupper);
+    return upper == "--RECURSIVE";
+}
 
-    if (!fs::exists(source))
+CommandResult RemoveCommand::removePath(fs::path const& target, const bool recursive)
+{
+    if (!fs::exists(target))
     {
-        std::cerr << "The system cannot find the path specified: " << source << '\n';
-        return;
+        std::cerr << "The system cannot find the path specified: " << target << '\n';
+        return CommandResult::PathNotFound;
     }
 
     try
     {
-        std::string opt_upper = option;
-        make_upper(opt_upper);
-        if (option == "-r" || opt_upper == "--RECURSIVE")
-            fs::remove_all(source);
+        if (fs::is_directory(target))
+        {
+            if (!recursive)
+            {
+                std::cerr << "The specified path is a directory. Use -r to remove recursively.\n";
+                return CommandResult::InvalidSyntax;
+            }
+            fs::remove_all(target);
+        }
         else
-            fs::remove(source);
+        {
+            fs::remove(target);
+        }
     }
     catch (const fs::filesystem_error& e)
     {
-        std::cerr << "Error removing file '" << source << "': " << e.what() << '\n';
+        std::cerr << "Error removing '" << target << "': " << e.what() << '\n';
+        return CommandResult::PathNotFound;
     }
+
+    return CommandResult::Success;
+}
+
+CommandResult RemoveCommand::execute(arguments const& args)
+{
+    if (args.empty())
+    {
+        std::cerr << "Usage: remove [--recursive | -r] <path>\n";
+        return CommandResult::InvalidSyntax;
+    }
+
+    fs::path target;
+    bool recursive = false;
+
+    if (args.size() == 1)
+    {
+        target = args[0];
+    }
+    else if (args.size() == 2)
+    {
+        if (!isRecursiveOption(args[0]))
+        {
+            std::cerr << "Unknown option: " << args[0] << '\n';
+            return CommandResult::UnknownOption;
+        }
+        recursive = true;
+        target = args[1];
+    }
+    else
+    {
+        std::cerr << "Usage: remove [--recursive | -r] <path>\n";
+        return CommandResult::InvalidSyntax;
+    }
+
+    return removePath(target, recursive);
 }
 
 std::unique_ptr<Command> RemoveCommand::clone() const
 {
     return std::make_unique<RemoveCommand>(*this);
-}
-
-std::optional<std::pair<std::string, fs::path>>
-RemoveCommand::parse_args(const std::string& args, std::string& err)
-{
-    const auto tokens = split_quoted_args(args);
-
-    if (tokens.size() != 1 && tokens.size() != 2)
-    {
-        err = "The syntax of the command is incorrect. Usage: remove [--recursive | -r] <source>";
-        return std::nullopt;
-    }
-
-    std::string option;
-    fs::path source, destination;
-
-    if (tokens.size() == 2)
-    {
-        option = tokens[0];
-
-        bool valid = false;
-        if (option == "-r")
-            valid = true;
-        else
-        {
-            std::string opt_upper = option;
-            make_upper(opt_upper);
-            if (opt_upper == "--RECURSIVE")
-                valid = true;
-        }
-
-        if (!valid)
-        {
-            err = "Unknown option: " + option;
-            return std::nullopt;
-        }
-
-        source = fs::path(tokens[1]);
-    }
-    else
-    {
-        option.clear();
-        source = fs::path(tokens[0]);
-    }
-
-    return std::make_pair(option, source);
-}
-
-std::vector<std::string> RemoveCommand::split_quoted_args(const std::string& s)
-{
-    std::vector<std::string> tokens;
-    std::string cur;
-    bool inq = false;
-    for (const char ch : s)
-    {
-        if (ch == '"') { inq = !inq; continue; }
-        if (std::isspace(static_cast<unsigned char>(ch)) && !inq)
-        {
-            if (!cur.empty()) { tokens.push_back(cur); cur.clear(); }
-        }
-        else cur.push_back(ch);
-    }
-    if (!cur.empty()) tokens.push_back(cur);
-    return tokens;
 }

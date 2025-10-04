@@ -21,6 +21,7 @@ set(SOURCES
         include/StringUtils.hxx
         src/portable_getch.c
         include/portable_getch.h
+        include/using_arguments.h
 )
 
 add_executable(lshell ${SOURCES})

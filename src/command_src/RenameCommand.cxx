@@ -2,67 +2,54 @@
 #include <iostream>
 #include <vector>
 
-void RenameCommand::execute(const std::string& args)
+std::optional<std::pair<std::string_view, std::string_view>>
+RenameCommand::parseArguments(arguments const& args, std::string& err)
 {
-    std::string err;
-    auto p = parse_args(args, err);
-    if (!p)
+    if (args.size() != 2)
     {
-        std::cout << err << '\n';
-        return;
+        err = "The syntax of the command is incorrect. Usage: rename <old> <new>";
+        return std::nullopt;
     }
 
-    auto [source, destination] = *p;
+    return std::make_pair(args[0], args[1]);
+}
 
+CommandResult RenameCommand::renamePath(fs::path const& source, fs::path const& destination)
+{
     if (!fs::exists(source))
     {
         std::cerr << "The system cannot find the path specified: " << source << '\n';
-        return;
+        return CommandResult::PathNotFound;
     }
 
-    try
+    std::error_code ec;
+    fs::rename(source, destination, ec);
+
+    if (ec)
     {
-        fs::rename(source, destination);
+        std::cerr << "Error renaming file: " << ec.message() << '\n';
+        return CommandResult::CommandFailed;
     }
-    catch (const fs::filesystem_error& e)
+
+    return CommandResult::Success;
+}
+
+CommandResult RenameCommand::execute(arguments const& args)
+{
+    std::string err;
+    auto parsed = parseArguments(args, err);
+
+    if (!parsed)
     {
-        std::cerr << "Error renaming file: " << e.what() << '\n';
+        std::cerr << err << '\n';
+        return CommandResult::InvalidSyntax;
     }
+
+    auto [source, destination] = *parsed;
+    return renamePath(source, destination);
 }
 
 std::unique_ptr<Command> RenameCommand::clone() const
 {
     return std::make_unique<RenameCommand>(*this);
-}
-
-std::optional<std::pair<fs::path, fs::path>> RenameCommand::parse_args(const std::string& args, std::string& err)
-{
-    const auto tokens = split_quoted_args(args);
-
-    if (tokens.size() != 2)
-    {
-        err = "The syntax of the command is incorrect. Usage: RENAME <old> <new>";
-        return std::nullopt;
-    }
-
-    return std::make_pair( fs::path{ tokens[0] }, fs::path{ tokens[1] } );
-}
-
-
-std::vector<std::string> RenameCommand::split_quoted_args(const std::string& s)
-{
-    std::vector<std::string> tokens;
-    std::string cur;
-    bool inq = false;
-    for (const char ch : s)
-    {
-        if (ch == '"') { inq = !inq; continue; }
-        if (std::isspace(static_cast<unsigned char>(ch)) && !inq)
-        {
-            if (!cur.empty()) { tokens.push_back(cur); cur.clear(); }
-        }
-        else cur.push_back(ch);
-    }
-    if (!cur.empty()) tokens.push_back(cur);
-    return tokens;
 }

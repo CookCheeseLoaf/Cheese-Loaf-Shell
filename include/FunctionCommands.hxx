@@ -4,11 +4,11 @@
 
 #ifndef SHELL_FUNCTIONCOMMANDS_HXX
 #define SHELL_FUNCTIONCOMMANDS_HXX
-#include <string>
+#include "using_arguments.h"
 
-void help_command(std::string const& /* args */);
-void touch_command(std::string const& /* args */);
-void show_command(std::string const& /* args */);
-void version_command(std::string const& /* args */);
+void help_command(arguments const& /* args */);
+void touch_command(arguments const& /* args */);
+void show_command(arguments const& /* args */);
+void version_command(arguments const& /* args */);
 
 #endif //SHELL_FUNCTIONCOMMANDS_HXX

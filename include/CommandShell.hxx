@@ -4,14 +4,28 @@
 
 #ifndef SHELL_COMMAND_SHELL_HXX
 #define SHELL_COMMAND_SHELL_HXX
-#include <string>
 #include <memory>
 #include <iostream>
+#include <string_view>
+#include <vector>
+
+enum class CommandResult
+{
+    Success,
+    InvalidSyntax,
+    AlreadyExists,
+    PermissionDenied,
+    PathNotFound,
+    CommandFailed,
+    UnknownOption,
+    AccessDenied,
+    UnknownError
+};
 
 struct Command
 {
     virtual ~Command() = default;
-    virtual void execute(std::string const& /* args */) = 0;
+    [[nodiscard]] virtual CommandResult execute(std::vector<std::string_view> const& /* args */) = 0;
     [[nodiscard]] virtual std::unique_ptr<Command> clone() const = 0;
 };
 
@@ -34,7 +48,7 @@ struct CommandCallable
         return *this;
     }
 
-    void operator()(std::string const& args) const
+    void operator()(std::vector<std::string_view> const& args) const
     {
         if (ptr) ptr->execute(args);
         else std::cerr << "Command object empty.\n";

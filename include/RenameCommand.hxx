@@ -2,20 +2,21 @@
 #define SHELL_RENAME_COMMAND_HXX
 
 #include "CommandShell.hxx"
-#include "FileSystemUtils.hxx"
 #include <memory>
-#include <utility>
+#include "FileSystemUtils.hxx"
+#include "using_arguments.h"
 
-class RenameCommand final: public Command
+class RenameCommand final : public Command
 {
 public:
-    void execute(const std::string& args) override;
+    CommandResult execute(arguments const& args) override;
     [[nodiscard]] std::unique_ptr<Command> clone() const override;
 
 private:
-    using two_paths = std::pair<fs::path, fs::path>;
-    static std::optional<two_paths> parse_args(const std::string& /* args */, std::string& /* err */);
-    static std::vector<std::string> split_quoted_args(const std::string& s);
+    static std::optional<std::pair<std::string_view, std::string_view>>
+        parseArguments(arguments const& args, std::string& err);
+    static CommandResult renamePath(fs::path const& source, fs::path const& destination);
 };
+
 
 #endif

@@ -3,54 +3,92 @@
 //
 
 #include "RemoveDirectoriesCommand.hxx"
-#include "FileSystemUtils.hxx"
 #include <iostream>
 
-void RemoveDirectoriesCommand::execute(const std::string& args)
+bool RemoveDirectoriesCommand::validateArguments(arguments const& args)
 {
-    if (args.empty())
+    if (args.size() != 1)
     {
-        std::cerr << "The syntax of the command is incorrect.\n";
-        return;
+        std::cerr << "Usage: rmdir <directory>\n";
+        return false;
     }
+    return true;
+}
 
-    fs::path dir;
-
-    try
+void RemoveDirectoriesCommand::reportError(std::error_code ec)
+{
+    switch (ec.value())
     {
-        dir = fs::path(args);
+        case static_cast<int>(std::errc::directory_not_empty):
+            std::cerr << "The directory is not empty.\n";
+            break;
+        case static_cast<int>(std::errc::permission_denied):
+            std::cerr << "Access is denied.\n";
+            break;
+        default:
+            std::cerr << "The system cannot find the path specified.\n";
+            break;
     }
-    catch (const fs::filesystem_error&)
-    {
-        std::cerr << "The filename, directory name, or volume label syntax is incorrect.\n";
-        return;
-    }
+}
 
+
+CommandResult RemoveDirectoriesCommand::removeDirectory(fs::path const& dir)
+{
     if (!fs::exists(dir))
     {
         std::cerr << "The system cannot find the path specified.\n";
-        return;
+        return CommandResult::PathNotFound;
     }
 
     if (!fs::is_directory(dir))
     {
         std::cerr << "The specified path is not a directory.\n";
-        return;
+        return CommandResult::InvalidSyntax;
     }
 
-    if (std::error_code ec;
-        !fs::remove(dir, ec))
+    std::error_code ec;
+    if (!fs::remove(dir, ec))
     {
-        if (ec)
+        if (ec == std::errc::directory_not_empty)
+            std::cerr << "The directory is not empty.\n";
+        else
+            std::cerr << "Error removing directory: " << ec.message() << '\n';
+
+        return CommandResult::Failure;
+    }
+
+    return CommandResult::Success;
+}
+
+
+CommandResult RemoveDirectoriesCommand::execute(arguments const& args)
+{
+    if (!validateArguments(args))
+        return CommandResult::InvalidSyntax;
+
+    bool recursive = false;
+    fs::path directory;
+
+    if (args.size() == 1)
+    {
+        directory = args[0];
+    }
+    else
+    {
+        const auto& option = args[0];
+        if (option == "-r" || option == "--recursive")
         {
-            if (ec.value() == static_cast<int>(std::errc::directory_not_empty))
-                std::cerr << "The directory is not empty.\n";
-            else
-                std::cerr << "Error removing directory: " << ec.message() << '\n';
+            recursive = true;
+            directory = args[1];
         }
         else
-            std::cerr << "Failed to remove the directory.\n";
+        {
+            std::cerr << "Unknown option: " << option << '\n';
+            return CommandResult::UnknownOption;
+        }
     }
+
+    return removeDirectory(directory);
 }
 
 std::unique_ptr<Command> RemoveDirectoriesCommand::clone() const

@@ -6,10 +6,10 @@
 #include <iostream>
 #include "ANSI.hxx"
 
-
-void ListDirectoriesCommand::execute(const std::string& args)
+CommandResult ListDirectoriesCommand::execute(arguments const& args)
 {
-    const fs::path dir = args.empty() ? "." : args;
+
+    const fs::path dir = args.empty() ? "." : args[0];
 
     try
     {
@@ -19,7 +19,10 @@ void ListDirectoriesCommand::execute(const std::string& args)
     catch (const fs::filesystem_error&)
     {
         std::cerr << "The system cannot find the path specified.\n";
+        return CommandResult::PathNotFound;
     }
+
+    return CommandResult::Success;
 }
 
 void ListDirectoriesCommand::PrintEntry(const fs::directory_entry& entry)
@@ -45,7 +48,7 @@ std::string ListDirectoriesCommand::DetermineColor(const fs::directory_entry& en
     return "";
 }
 
-std::unique_ptr<Command> ListDirectoriesCommand::clone() const
+auto ListDirectoriesCommand::clone() const -> std::unique_ptr<Command>
 {
     return std::make_unique<ListDirectoriesCommand>(*this);
 }

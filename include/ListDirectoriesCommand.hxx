@@ -3,12 +3,13 @@
 
 #include "CommandShell.hxx"
 #include "FileSystemUtils.hxx"
+#include "using_arguments.h"
 
 class ListDirectoriesCommand final : public Command
 {
 public:
-    void execute(const std::string& /* args */) override;
-    [[nodiscard]] std::unique_ptr<Command> clone() const override;
+    CommandResult execute(arguments const& /* args */) override;
+    [[nodiscard]] auto clone() const -> std::unique_ptr<Command> override;
 
 private:
     static void PrintEntry(fs::directory_entry const& /* entry */);

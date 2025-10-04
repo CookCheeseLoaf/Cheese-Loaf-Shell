@@ -2,114 +2,74 @@
 // Created by Loaf on 9/4/2025.
 //
 
-#include "FileSystemUtils.hxx"
-#include "CommandShell.hxx"
 #include "MakeDirectoriesCommand.hxx"
+#include "FileSystemUtils.hxx"
 #include <iostream>
+#include <system_error>
 
-void MakeDirectoriesCommand::execute(const std::string& args)
+bool MakeDirectoriesCommand::validateArguments(arguments const& args)
 {
-    if (args.empty())
+    if (args.size() != 1)
     {
-        std::cerr << "The syntax of the command is incorrect.\n";
-        return;
+        std::cerr << "The syntax of the command is incorrect. Usage: mkdir <directory>\n";
+        return false;
+    }
+    return true;
+}
+
+CommandResult MakeDirectoriesCommand::createDirectory(const std::string_view arg)
+{
+    if (arg.empty())
+    {
+        std::cerr << "The syntax of the command is incorrect. Usage: mkdir <directory>\n";
+        return CommandResult::InvalidSyntax;
     }
 
-    fs::path dir;
-
-    try
-    {
-        dir = fs::path(args);
-    }
-    catch (const fs::filesystem_error&)
-    {
-        std::cerr << "The filename, directory name, or volume label syntax is incorrect.\n";
-        return;
-    }
-
-    if (fs::exists(dir))
-    {
-        std::cerr << "A subdirectory or file already exists.\n";
-        return;
-    }
+    fs::path directoryPath{ arg };
 
     std::error_code ec;
-    fs::create_directories(dir, ec);
+    fs::create_directories(directoryPath, ec);
     if (ec)
     {
+        reportError(ec);
+
+        if (ec.value() == static_cast<int>(std::errc::file_exists))
+            return CommandResult::AlreadyExists;
+
         if (ec.value() == static_cast<int>(std::errc::permission_denied))
+            return CommandResult::AccessDenied;
+
+        return CommandResult::PathNotFound;
+    }
+
+    return CommandResult::Success;
+}
+
+void MakeDirectoriesCommand::reportError(const std::error_code ec)
+{
+    switch (ec.value())
+    {
+        case static_cast<int>(std::errc::permission_denied):
             std::cerr << "Access is denied.\n";
-        else if (ec.value() == static_cast<int>(std::errc::file_exists))
+            break;
+        case static_cast<int>(std::errc::file_exists):
             std::cerr << "A subdirectory or file already exists.\n";
-        else
+            break;
+        default:
             std::cerr << "The system cannot find the path specified.\n";
+            break;
     }
 }
 
-std::unique_ptr<Command> MakeDirectoriesCommand::clone() const
+CommandResult MakeDirectoriesCommand::execute(arguments const& args)
+{
+    if (!validateArguments(args))
+        return CommandResult::InvalidSyntax;
+
+    return createDirectory(args[0]);
+}
+
+auto MakeDirectoriesCommand::clone() const -> std::unique_ptr<Command>
 {
     return std::make_unique<MakeDirectoriesCommand>(*this);
-}
-
-std::optional<MakeDirectoriesCommand::two_paths>
-MakeDirectoriesCommand::parse_args(const std::string& args, std::string& err)
-{
-    const auto tokens = split_quoted_args(args);
-
-    if (tokens.size() != 1)
-    {
-        err = "The syntax of the command is incorrect. Usage: MKDIR <source>";
-        return std::nullopt;
-    }
-
-    fs::path source;
-
-    if (tokens.size() == 2)
-    {
-        option = tokens[0];
-
-        bool valid = false;
-        if (option == "-r")
-            valid = true;
-        else
-        {
-            std::string opt_upper = option;
-            make_upper(opt_upper);
-            if (opt_upper == "--RECURSIVE")
-                valid = true;
-        }
-
-        if (!valid)
-        {
-            err = "Unknown option: " + option;
-            return std::nullopt;
-        }
-
-        source = fs::path(tokens[1]);
-    }
-    else
-    {
-        option.clear();
-        source = fs::path(tokens[0]);
-    }
-
-    return std::make_pair(option, source);
-}
-
-std::vector<std::string> RemoveCommand::split_quoted_args(const std::string& s)
-{
-    std::vector<std::string> tokens;
-    std::string cur;
-    bool inq = false;
-    for (const char ch : s)
-    {
-        if (ch == '"') { inq = !inq; continue; }
-        if (std::isspace(static_cast<unsigned char>(ch)) && !inq)
-        {
-            if (!cur.empty()) { tokens.push_back(cur); cur.clear(); }
-        }
-        else cur.push_back(ch);
-    }
-    if (!cur.empty()) tokens.push_back(cur);
-    return tokens;
 }

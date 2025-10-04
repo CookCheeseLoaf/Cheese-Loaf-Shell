@@ -22,23 +22,24 @@
 #include "ChangeDirectoriesCommand.hxx"
 #include "ListDirectoriesCommand.hxx"
 #include "portable_getch.h"
+#include "using_arguments.h"
 
 REPL::REPL()
 {
-    m_commands[ReservedWords::DIR] =    [](const std::string& args) { ListDirectoriesCommand{}.execute(args); };
-    m_commands[ReservedWords::CHDIR] =  [](const std::string& args) { ChangeDirectoriesCommand{}.execute(args); };
-    m_commands[ReservedWords::COPY] =   [](const std::string& args) { CopyCommand{}.execute(args); };
-    m_commands[ReservedWords::DELETE] = [](const std::string& args) { RemoveCommand{}.execute(args); };
+    m_commands[ReservedWords::DIR] =    [](arguments const& args) { ListDirectoriesCommand{}.execute(args); };
+    m_commands[ReservedWords::CHDIR] =  [](arguments const& args) { ChangeDirectoriesCommand{}.execute(args); };
+    m_commands[ReservedWords::COPY] =   [](arguments const& args) { CopyCommand{}.execute(args); };
+    m_commands[ReservedWords::DELETE] = [](arguments const& args) { RemoveCommand{}.execute(args); };
 
-    m_commands[ReservedWords::MKDIR] =  [](const std::string& args) { MakeDirectoriesCommand{}.execute(args); };
-    m_commands[ReservedWords::RMDIR] =  [](const std::string& args) { RemoveDirectoriesCommand{}.execute(args); };
-    m_commands[ReservedWords::RENAME] = [](const std::string& args) { RenameCommand{}.execute(args); };
+    m_commands[ReservedWords::MKDIR] =  [](arguments const& args) { MakeDirectoriesCommand{}.execute(args); };
+    m_commands[ReservedWords::RMDIR] =  [](arguments const& args) { RemoveDirectoriesCommand{}.execute(args); };
+    m_commands[ReservedWords::RENAME] = [](arguments const& args) { RenameCommand{}.execute(args); };
 
-    m_commands[ReservedWords::EXIT] =   [](std::string const&) { std::exit(0); };
-    m_commands[ReservedWords::PRINT] =   [](const std::string& args) { std::cout << args << '\n'; };
-    m_commands[ReservedWords::CLEAR] =  [](std::string const&) { std::cout << ansi::CLEAR_SCREEN; };
-    m_commands[ReservedWords::WHEREAMI] = [](const std::string&) { std::cout << get_dir() << '\n'; };
-    m_commands[ReservedWords::PAUSE] =  [](const std::string&) { portable_getch(); };
+    m_commands[ReservedWords::EXIT] =   [](arguments const&) { std::exit(0); };
+    m_commands[ReservedWords::PRINT] =   [](arguments const& args) { std::cout << args << '\n'; };
+    m_commands[ReservedWords::CLEAR] =  [](arguments const&) { std::cout << ansi::CLEAR_SCREEN; };
+    m_commands[ReservedWords::WHEREAMI] = [](arguments const&) { std::cout << get_dir() << '\n'; };
+    m_commands[ReservedWords::PAUSE] =  [](arguments const&) { portable_getch(); };
 
     m_commands[ReservedWords::SHOW] =   show_command;
     m_commands[ReservedWords::HELP] =   help_command;
@@ -54,48 +55,72 @@ REPL::REPL()
     m_commands[ReservedWords::REN] =    m_commands[ReservedWords::RENAME];
 }
 
-bool REPL::operator()(const std::string& str)
+bool REPL::operator()(std::string_view str)
 {
-    auto parsed = parse_args_opt(str);
-    if (!parsed) return false;
+    parsed_command = parse_args(str);
 
-    auto [commandToken, args] = *parsed;
+    ReservedWords rw = stringToReservedWord(parsed_command.command);
 
-    if (const auto it = m_commands.find(stringToReservedWord(commandToken)); it != m_commands.end())
+    if (const auto it = m_commands.find(rw); it != m_commands.end())
     {
-        it->second(args);
+        it->second(parsed_command.args);
         return true;
     }
     return false;
 }
 
-std::optional<ParsedCmd> REPL::parse_args(std::string_view input)
+ParsedCmd REPL::parse_args(std::string_view input)
 {
-    std::istringstream iss{ std::string(input) };
-    std::string cmd;
-    if (!(iss >> cmd)) return std::nullopt;
-    std::string args;
-    std::getline(iss, args);
+    size_t space = input.find(' ');
+    std::string cmd = std::string(input.substr(0, space));
+    std::string_view args_view = space == std::string_view::npos ? "" : input.substr(space + 1);
 
-    auto trim = [](const std::string& s) -> std::string
+    auto trim_view = [](std::string_view s) -> std::string_view
     {
-        const auto first = s.find_first_not_of(" \t\r\n");
-        if (first == std::string::npos) return {};
-        const auto last = s.find_last_not_of(" \t\r\n");
+        const size_t first = s.find_first_not_of(" \t\r\n");
+        if (first == std::string_view::npos) return {};
+        const size_t last = s.find_last_not_of(" \t\r\n");
         return s.substr(first, last - first + 1);
     };
-    args = trim(args);
+    args_view = trim_view(args_view);
 
     std::ranges::transform(cmd, cmd.begin(),
                            [](const unsigned char c) { return static_cast<char>(std::toupper(c)); });
 
-    parsed_command.command = cmd;
-
-    for ()
-
-    parsed_command = ParsedCmd{ cmd, args };
-    return ParsedCmd{ std::move(cmd), std::move(args) };
+    return { cmd, split_quoted_args(args_view) };
 }
+
+std::vector<std::string_view> REPL::split_quoted_args(std::string_view input) {
+    std::vector<std::string_view> tokens;
+    size_t start = 0;
+    bool in_quotes = false;
+
+    for (size_t i = 0; i <= input.size(); ++i) {
+        if (i == input.size() || (!in_quotes && std::isspace(static_cast<unsigned char>(input[i]))))
+        {
+            if (start < i)
+                tokens.push_back(input.substr(start, i - start));
+            start = i + 1;
+        }
+        else if (input[i] == '"')
+        {
+            if (!in_quotes)
+            {
+                start = i + 1;
+                in_quotes = true;
+            }
+            else
+            {
+                tokens.push_back(input.substr(start, i - start));
+                start = i + 1;
+                in_quotes = false;
+            }
+        }
+    }
+
+    return tokens;
+}
+
 
 std::string REPL::get_dir()
 {

@@ -1,114 +1,90 @@
-//
-// Created by Loaf on 9/4/2025.
-//
-
 #include "CopyCommand.hxx"
 #include <iostream>
+#include <algorithm>
+#include <ranges>
 
-#include "StringUtils.hxx"
-
-void CopyCommand::execute(const std::string& args)
+bool
+CopyCommand::isRecursiveOption(std::string_view option)
 {
-    std::string err;
-    auto p = parse_args(args, err);
-    if (!p)
+    if (option == "-r")
+        return true;
+
+    std::string upper(option);
+    std::ranges::transform(upper, upper.begin(), ::toupper);
+    return upper == "--RECURSIVE";
+}
+
+std::optional<std::pair<std::string_view, std::string_view>>
+CopyCommand::parseArguments(arguments const& args, bool& recursive)
+{
+    recursive = false;
+
+    if (args.size() == 2)
+        return std::make_pair(args[0], args[1]);
+
+    if (args.size() == 3)
     {
-        std::cerr << err << '\n';
-        return;
+        if (!isRecursiveOption(args[0]))
+        {
+            std::cerr << "Unknown option: " << args[0] << '\n';
+            return std::nullopt;
+        }
+
+        recursive = true;
+        return std::make_pair(args[1], args[2]);
     }
-    auto [option, source, destination] = *p;
+
+    std::cerr << "Usage: copy [--recursive | -r] <source> <destination>\n";
+    return std::nullopt;
+}
+
+CommandResult
+CopyCommand::performCopy(fs::path const& source,
+                                       fs::path const& destination,
+                                       const bool recursive)
+{
+    std::error_code ec;
+
+    fs::copy_options options = fs::copy_options::overwrite_existing;
+    if (recursive)
+        options |= fs::copy_options::recursive;
+
+    fs::copy(source, destination, options, ec);
+
+    if (ec)
+    {
+        std::cerr << "Error copying '" << source << "' to '" << destination
+                  << "': " << ec.message() << '\n';
+        return CommandResult::PathNotFound;
+    }
+
+    return CommandResult::Success;
+}
+
+CommandResult
+CopyCommand::execute(arguments const& args)
+{
+    bool recursive = false;
+    auto parsed = parseArguments(args, recursive);
+
+    if (!parsed)
+        return CommandResult::InvalidSyntax;
+
+    auto [sourceArg, destinationArg] = *parsed;
+    const fs::path source(sourceArg);
+    const fs::path destination(destinationArg);
 
     if (!fs::exists(source))
     {
         std::cerr << "The system cannot find the path specified: " << source << '\n';
-        return;
+        return CommandResult::PathNotFound;
     }
 
-    try
-    {
-        const std::string opt_upper = option;
-        make_upper(option);
-        if (option == "-r" || opt_upper == "--RECURSIVE")
-            fs::copy(source, destination,
-                     fs::copy_options::recursive | fs::copy_options::overwrite_existing);
-        else
-            fs::copy(source, destination, fs::copy_options::overwrite_existing);
-    }
-    catch (const fs::filesystem_error& e)
-    {
-        std::cerr << "Error renaming file '" << source << "': " << e.what() << '\n';
-    }
+    return performCopy(source, destination, recursive);
 }
 
-std::unique_ptr<Command> CopyCommand::clone() const
+std::unique_ptr<Command>
+CopyCommand::clone() const
 {
     return std::make_unique<CopyCommand>(*this);
-}
-
-std::optional<std::tuple<std::string, fs::path, fs::path>>
-CopyCommand::parse_args(const std::string& args, std::string& err)
-{
-    const auto tokens = split_quoted_args(args);
-
-    if (tokens.size() != 2 && tokens.size() != 3)
-    {
-        err = "Usage: copy [--recursive | -r] <source> <destination>";
-        return std::nullopt;
-    }
-
-    std::string option;
-    fs::path source, destination;
-
-    if (tokens.size() == 3)
-    {
-        option = tokens[0];
-
-        bool valid = false;
-        if (option == "-r")
-            valid = true;
-        else
-        {
-            const std::string opt_upper = option;
-            make_upper(option);
-            if (opt_upper == "--RECURSIVE")
-                valid = true;
-        }
-
-        if (!valid)
-        {
-            err = "Unknown option: " + option;
-            return std::nullopt;
-        }
-
-        source = fs::path(tokens[1]);
-        destination = fs::path(tokens[2]);
-    }
-    else
-    {
-        option.clear();
-        source = fs::path(tokens[0]);
-        destination = fs::path(tokens[1]);
-    }
-
-    return std::make_tuple(option, source, destination);
-}
-
-
-
-std::vector<std::string> CopyCommand::split_quoted_args(const std::string& s)
-{
-    std::vector<std::string> tokens;
-    std::string cur;
-    bool inq = false;
-    for (const char ch : s)
-    {
-        if (ch == '"') { inq = !inq; continue; }
-        if (std::isspace(static_cast<unsigned char>(ch)) && !inq)
-        {
-            if (!cur.empty()) { tokens.push_back(cur); cur.clear(); }
-        }
-        else cur.push_back(ch);
-    }
-    if (!cur.empty()) tokens.push_back(cur);
-    return tokens;
 }
