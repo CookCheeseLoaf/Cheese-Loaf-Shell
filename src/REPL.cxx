@@ -64,7 +64,27 @@ bool REPL::operator()(std::string const& input)
 {
     parsed_command = parse_args(input);
 
-    auto it{ m_commands.find(stringToReservedWord(parsed_command.command)) };
+    if (is_it_the_command_executable(parsed_command.command))
+    {
+        std::string command{ parsed_command.command };
+
+        if (command.find("./") == 0 || command.find(".\\") == 0)
+            command.erase(0, 2);
+
+        fs::path const cmd_path{ command };
+        std::string filename{ cmd_path.filename().string() };
+
+        if (fs::exists(cmd_path)
+            && fs::is_regular_file(cmd_path)
+            && FileSystemUtils::is_executable(cmd_path.string()))
+        {
+            if (FileSystemUtils::execute_executable(cmd_path.string()))
+                return true;
+             return false;
+        }
+    }
+
+    auto const it{ m_commands.find(stringToReservedWord(parsed_command.command)) };
     if (it == m_commands.end())
     {
         std::cerr << "Error: Unknown command '" << parsed_command.command << "'\n";
@@ -112,17 +132,22 @@ ParsedCmd REPL::parse_args(std::string const& input)
 {
     std::size_t const space{ input.find(' ') };
     std::string cmd{ input.substr(0, space) };
-    std::string args_str{ (space == std::string::npos) ? "" : input.substr(space + 1) };
+    std::string args_str{ space == std::string::npos ? "" : input.substr(space + 1) };
 
-    std::size_t const start{ args_str.find_first_not_of(" \t\r\n") };
-    std::size_t const end{ args_str.find_last_not_of(" \t\r\n") };
-
-    if (start != std::string::npos && end != std::string::npos)
+    if (std::size_t const end{ args_str.find_last_not_of(" \t\r\n") },
+        start{ args_str.find_first_not_of(" \t\r\n") };
+        start != std::string::npos && end != std::string::npos)
         args_str = args_str.substr(start, end - start + 1);
     else
         args_str.clear();
 
-    return { to_upper(std::move(cmd)), split_quoted_args(args_str) };
+    if (!(cmd.find('/') != std::string::npos ||
+                          cmd.find('\\') != std::string::npos ||
+                          cmd.find('.') != std::string::npos ||
+                          (!cmd.empty() && cmd[0] == '.')))
+        cmd = to_upper(std::move(cmd));
+
+    return { cmd, split_quoted_args(args_str) };
 }
 
 std::vector<std::string> REPL::split_quoted_args(std::string const& input)
@@ -162,4 +187,11 @@ std::vector<std::string> REPL::split_quoted_args(std::string const& input)
 std::string REPL::get_dir()
 {
     return fs::current_path().string();
+}
+
+bool REPL::is_it_the_command_executable(std::string_view const cmd)
+{
+    return cmd.find('/') != std::string::npos ||
+           cmd.find('\\') != std::string::npos ||
+           cmd.find('.')  != std::string::npos;
 }

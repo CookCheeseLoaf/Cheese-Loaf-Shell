@@ -24,16 +24,19 @@ class REPL final
 public:
     REPL();
     bool operator()(std::string const& /* input */);
+
+private:
+    std::map<ReservedWords, std::function<CommandResult(arguments const&)>> m_commands;
+
+public:
     static ParsedCmd parse_args(std::string const& /* input */);
     static std::vector<std::string> split_quoted_args(std::string const& /* args */);
+    static bool is_it_the_command_executable(std::string_view /* args */);
     static std::string get_dir();
     static constexpr int MAJOR = 0;
     static constexpr int MINOR = 2;
     static constexpr int PATCH = 0;
     ParsedCmd parsed_command;
-
-private:
-    std::map<ReservedWords, std::function<CommandResult(arguments const&)>> m_commands;
 };
 
 

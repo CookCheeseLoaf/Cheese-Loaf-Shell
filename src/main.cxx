@@ -27,7 +27,7 @@ int main()
 	while (true)
 	{
 		std::string const home{ FileSystemUtils::get_home_directory() };
-		std::string directory{ REPL::get_dir() + ansi::withForeground(">>> ", ansi::Foreground::MAGENTA) };
+		std::string directory{ REPL::get_dir() + ansi::withForeground(">>> ", ansi::Foreground::CYAN) };
 
 		if (directory.find(home) == 0)
 		{

@@ -15,6 +15,7 @@ namespace FileSystemUtils
 {
     std::string get_home_directory();
     bool is_executable(fs::path const& /* path */);
+    bool execute_executable(fs::path const& /* path */);
 }
 
 #endif //SHELL_FILESYSTEMUTILS_HXX
