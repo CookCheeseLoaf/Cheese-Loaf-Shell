@@ -15,17 +15,17 @@ Before you could build it, you would **obviously** need dependencies.
 + Compiler (GCC/Clang/MSVC) Make sure it support C++20, otherwise it would refuse to build.
 + [Replxx](https://github.com/AmokHuginnsson/replxx) (static build `.a` required)
 
-```cmake
+```sh
 cmake -S . -B build
 ```
-```cmake
-cmake --build build
+```sh
+cmake --build build --config RelWithDebInfo
 ```
 > the **build** can be named to anything, build_temp, temp_build, it won't matter.
 
 after building it, you could move the executable file into the binary directories where you can call its shell through your terminal.
-```cmake
-cmake --install build
+```sh
+cmake --install build --config RelWithDebInfo
 ```
 > this step require adminstrator/root access, so use sudo, doas, or su in unix, and logged into adminstrator in windows would suffice.
 
@@ -33,5 +33,5 @@ cmake --install build
 ### How to run it?
 you can either run the clshell in the compiled **build** directories or call it directly in terminal (after moving it through the binary directories)
 ```shell
-clshell
+lshell
 ```
