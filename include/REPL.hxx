@@ -28,7 +28,7 @@ public:
     static std::vector<std::string> split_quoted_args(std::string const& /* args */);
     static std::string get_dir();
     static constexpr int MAJOR = 0;
-    static constexpr int MINOR = 1;
+    static constexpr int MINOR = 2;
     static constexpr int PATCH = 0;
     ParsedCmd parsed_command;
 
