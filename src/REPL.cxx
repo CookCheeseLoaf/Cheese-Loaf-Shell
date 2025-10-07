@@ -141,10 +141,7 @@ ParsedCmd REPL::parse_args(std::string const& input)
     else
         args_str.clear();
 
-    if (!(cmd.find('/') != std::string::npos ||
-                          cmd.find('\\') != std::string::npos ||
-                          cmd.find('.') != std::string::npos ||
-                          (!cmd.empty() && cmd[0] == '.')))
+    if (!(cmd.find_first_of("./\\") != std::string::npos || (!cmd.empty() && cmd[0] == '.')))
         cmd = to_upper(std::move(cmd));
 
     return { cmd, split_quoted_args(args_str) };
@@ -191,7 +188,5 @@ std::string REPL::get_dir()
 
 bool REPL::is_it_the_command_executable(std::string_view const cmd)
 {
-    return cmd.find('/') != std::string::npos ||
-           cmd.find('\\') != std::string::npos ||
-           cmd.find('.')  != std::string::npos;
+    return cmd.find_first_of("./\\") != std::string_view::npos;
 }
