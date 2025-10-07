@@ -14,7 +14,6 @@ namespace
     std::optional<std::string> g_lastErr;
 }
 
-
 void ErrorPrinter::setLastError(std::string msg)
 {
     std::lock_guard guard{ g_lastErrMutex };
@@ -33,16 +32,16 @@ void ErrorPrinter::clearLastError()
     g_lastErr.reset();
 }
 
-static void print_formatted_error(const std::string& message)
+void print_formatted_error(std::string const& message)
 {
     bool in_escape{};
     int col{};
     int last_line_col{};
     std::string cleaned{};
 
-    for (size_t i = 0; i < message.size(); ++i)
+    for (std::size_t i = 0; i < message.size(); ++i)
     {
-        const char c{ message[i] };
+        char const c{ message[i] };
 
         if (in_escape)
         {
@@ -78,7 +77,7 @@ static void print_formatted_error(const std::string& message)
         else if (c == '\t')
         {
             constexpr int TABSTOP{ 8 };
-            int advance{ TABSTOP - (col % TABSTOP) };
+            int const advance{ TABSTOP - (col % TABSTOP) };
             col += advance;
             last_line_col = col;
         }
@@ -94,9 +93,10 @@ static void print_formatted_error(const std::string& message)
     {
         console_width = 80;
     }
-    int cursor_col{ last_line_col % console_width };
-    int emoticon_width{ 2 };
-    int spaces_needed{ console_width - cursor_col - emoticon_width };
+
+    int const cursor_col{ last_line_col % console_width };
+    int const emoticon_width{ 2 };
+    int const spaces_needed{ console_width - cursor_col - emoticon_width };
 
     std::string padding;
     if (spaces_needed > 0)
@@ -109,5 +109,8 @@ static void print_formatted_error(const std::string& message)
         padding.append(std::max(0, console_width - emoticon_width), ' ');
     }
 
-    std::cerr << message << padding << ansi::withForeground(":(", ansi::Foreground::RED) << '\n';
+    std::cerr << message
+              << padding
+              << ansi::withForeground(":(", ansi::Foreground::RED)
+              << '\n';
 }

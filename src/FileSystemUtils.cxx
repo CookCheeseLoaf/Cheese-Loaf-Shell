@@ -12,22 +12,31 @@
 std::string FileSystemUtils::get_home_directory()
 {
 #ifdef _WIN32
-    char* buffer = nullptr;
+    char* buffer{ nullptr };
     size_t size{};
-    if (_dupenv_s(&buffer, &size, "USERPROFILE") == 0 && buffer != nullptr)
+    if (_dupenv_s(&buffer, &size, "USERPROFILE") == 0 && buffer)
     {
         std::string home{ buffer };
         free(buffer);
         return home;
     }
+    char* drive{ nullptr }, *path{ nullptr };
+    size_t dsize{}, psize{};
+    if (_dupenv_s(&drive, &dsize, "HOMEDRIVE") == 0 && drive &&
+        _dupenv_s(&path, &psize, "HOMEPATH") == 0 && path)
+    {
+        std::string home{ std::string(drive) + std::string(path) };
+        free(drive); free(path);
+        return home;
+    }
 #else
     if (const char* home = std::getenv("HOME"))
-        return home;
+        return std::string(home);
 #endif
-        return ".";
+    return {};
 }
 
-bool FileSystemUtils::is_executable(const fs::path &path)
+bool FileSystemUtils::is_executable(fs::path const& path)
 {
 #ifdef _WIN32
         return path.extension() == ".exe";

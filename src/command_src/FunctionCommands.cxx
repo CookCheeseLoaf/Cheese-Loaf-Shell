@@ -9,24 +9,25 @@
 #include "ANSI.hxx"
 #include "FileSystemUtils.hxx"
 #include <fstream>
-
 #include "REPL.hxx"
 
 CommandResult help_command(arguments const&)
 {
-    for (uint8_t i = 0; i < static_cast<uint8_t>(ReservedWords::UNKNOWN); ++i)
+    for (std::uint8_t i{ 0 }; i < static_cast<std::uint8_t>(ReservedWords::UNKNOWN); ++i)
     {
-        const auto w{ static_cast<ReservedWords>(i) };
-        std::string_view wordStr{ reservedWordToString(w) };
+        auto const w{ static_cast<ReservedWords>(i) };
+        std::string_view const wordStr{ reservedWordToString(w) };
+
         std::cout << '<'
-        << ansi::foreground(ansi::Foreground::BLUE)
-        << wordStr
-        << ansi::RESET
-        << std::string(8 - wordStr.size(), ' ')
-        << "> "
-        << informationAboutReservedWords(w)
-        << '\n';
+                  << ansi::foreground(ansi::Foreground::BLUE)
+                  << wordStr
+                  << ansi::RESET
+                  << std::string(8 - wordStr.size(), ' ')
+                  << "> "
+                  << informationAboutReservedWords(w)
+                  << '\n';
     }
+
     return CommandResult::Success;
 }
 
@@ -38,11 +39,15 @@ CommandResult touch_command(arguments const& args)
         return CommandResult::InvalidSyntax;
     }
 
-    if (fs::exists(fs::path{ args[0] }))
+    fs::path const filePath{ args[0] };
+
+    if (fs::exists(filePath))
         return CommandResult::AlreadyExists;
 
-    std::ofstream{ args[0].data() };
-    return CommandResult::Success;
+    if (std::ofstream{ filePath })
+        return CommandResult::Success;
+
+    return CommandResult::PermissionDenied;
 }
 
 CommandResult show_command(arguments const& args)
@@ -53,16 +58,29 @@ CommandResult show_command(arguments const& args)
         return CommandResult::InvalidSyntax;
     }
 
-    std::cout << std::ifstream{ args[0].data() }.rdbuf() << '\n';
+    std::ifstream file{ args[0] };
+    if (!file)
+    {
+        std::cerr << "Error: Unable to open file '" << args[0] << "' for reading.\n";
+        return CommandResult::PathNotFound;
+    }
+
+    std::cout << file.rdbuf() << '\n';
     return CommandResult::Success;
 }
 
 CommandResult version_command(arguments const&)
 {
     char versionBuf[64];
-    std::snprintf(versionBuf, sizeof(versionBuf), "%d.%d.%d",
-                  REPL::MAJOR, REPL::MINOR, REPL::PATCH);
-    std::string colored = ansi::withForeground(versionBuf, ansi::Foreground::RED);
+    std::snprintf(
+        versionBuf,
+        sizeof(versionBuf),
+        "%d.%d.%d",
+        REPL::MAJOR,
+        REPL::MINOR,
+        REPL::PATCH);
+
+    std::string const colored{ ansi::withForeground(versionBuf, ansi::Foreground::RED) };
 
     std::cout << R"(
          .-'''-.
@@ -89,12 +107,13 @@ CommandResult version_command(arguments const&)
 
 CommandResult print_command(arguments const& args)
 {
-    for (auto it = args.begin(); it != args.end(); ++it)
+    for (auto it{ args.begin() }; it != args.end(); ++it)
     {
         std::cout << *it;
         if (std::next(it) != args.end())
             std::cout << ' ';
     }
+
     std::cout << '\n';
     return CommandResult::Success;
 }

@@ -8,7 +8,8 @@
 #include <string>
 #include <map>
 
-enum class ReservedWords : unsigned char {
+enum class ReservedWords : unsigned char
+{
     DIR,
     CD,
     CHDIR,
@@ -36,9 +37,9 @@ enum class ReservedWords : unsigned char {
 };
 
 
-inline ReservedWords stringToReservedWord(const std::string& str)
+inline ReservedWords stringToReservedWord(std::string const& str)
 {
-    static const std::map<std::string, ReservedWords> stringToEnum =
+    static std::map<std::string, ReservedWords> const stringToEnum
     {
         {"DIR",     ReservedWords::DIR},
         {"CD",      ReservedWords::CD},
@@ -65,12 +66,12 @@ inline ReservedWords stringToReservedWord(const std::string& str)
         {"VER",     ReservedWords::VER}
     };
 
-    if (const auto it = stringToEnum.find(str); it != stringToEnum.end())
+    if (auto const it = stringToEnum.find(str); it != stringToEnum.end())
         return it->second;
     return ReservedWords::UNKNOWN;
 }
 
-constexpr const char* reservedWordToString(const ReservedWords word)
+constexpr const char* reservedWordToString(ReservedWords const word)
 {
     switch (word)
     {
@@ -102,7 +103,7 @@ constexpr const char* reservedWordToString(const ReservedWords word)
     }
 }
 
-constexpr const char* informationAboutReservedWords(const ReservedWords word)
+constexpr const char* informationAboutReservedWords(ReservedWords const word)
 {
     switch (word)
     {

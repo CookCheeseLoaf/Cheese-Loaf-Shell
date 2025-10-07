@@ -18,7 +18,7 @@ int get_console_width()
     if (h == INVALID_HANDLE_VALUE) return 80;
     if (!GetConsoleScreenBufferInfo(h, &csbi)) return 80;
     int width = csbi.srWindow.Right - csbi.srWindow.Left + 1;
-    return (width > 0) ? width : 80;
+    return width > 0 ? width : 80;
 #else
     struct winsize ws{};
     if (ioctl(STDERR_FILENO, TIOCGWINSZ, &ws) == -1 || ws.ws_col == 0) {

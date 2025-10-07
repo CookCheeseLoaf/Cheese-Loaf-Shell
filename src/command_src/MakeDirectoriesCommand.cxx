@@ -17,7 +17,7 @@ bool MakeDirectoriesCommand::validateArguments(arguments const& args)
     return true;
 }
 
-CommandResult MakeDirectoriesCommand::createDirectory(const std::string_view arg)
+CommandResult MakeDirectoriesCommand::createDirectory(std::string_view const arg)
 {
     if (arg.empty())
     {
@@ -27,8 +27,9 @@ CommandResult MakeDirectoriesCommand::createDirectory(const std::string_view arg
 
     fs::path directoryPath{ arg };
 
-    std::error_code ec;
+    std::error_code ec{};
     fs::create_directories(directoryPath, ec);
+
     if (ec)
     {
         reportError(ec);
@@ -45,7 +46,7 @@ CommandResult MakeDirectoriesCommand::createDirectory(const std::string_view arg
     return CommandResult::Success;
 }
 
-void MakeDirectoriesCommand::reportError(const std::error_code ec)
+void MakeDirectoriesCommand::reportError(std::error_code const& ec)
 {
     switch (ec.value())
     {

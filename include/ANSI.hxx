@@ -45,8 +45,8 @@ namespace ansi
 		BRIGHT_WHITE
 	};
 
-	inline constexpr auto RESET = "\033[0m";
-	inline constexpr auto CLEAR_SCREEN = "\033[2J\033[H";
+	inline constexpr auto RESET{ "\033[0m" };
+	inline constexpr auto CLEAR_SCREEN{ "\033[2J\033[H" };
 
 	inline std::string foreground(Foreground fg)
 	{

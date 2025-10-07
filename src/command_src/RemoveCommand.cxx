@@ -3,17 +3,17 @@
 #include <iostream>
 #include <algorithm>
 
-bool RemoveCommand::isRecursiveOption(std::string_view option)
+bool RemoveCommand::isRecursiveOption(std::string_view const option)
 {
     if (option == "-r")
         return true;
 
-    std::string upper(option);
-    std::ranges::transform(upper, upper.begin(), [](const unsigned char c) { return static_cast<unsigned char>(std::toupper(c)); });
+    std::string upper{ option };
+    std::ranges::transform(upper, upper.begin(), [](unsigned char const c) { return static_cast<unsigned char>(std::toupper(c)); });
     return upper == "--RECURSIVE";
 }
 
-CommandResult RemoveCommand::removePath(fs::path const& target, const bool recursive)
+CommandResult RemoveCommand::removePath(fs::path const& target, bool const recursive)
 {
     if (!fs::exists(target))
     {
@@ -33,11 +33,9 @@ CommandResult RemoveCommand::removePath(fs::path const& target, const bool recur
             fs::remove_all(target);
         }
         else
-        {
             fs::remove(target);
-        }
     }
-    catch (const fs::filesystem_error& e)
+    catch (fs::filesystem_error const& e)
     {
         std::cerr << "Error removing '" << target << "': " << e.what() << '\n';
         return CommandResult::PathNotFound;
@@ -54,13 +52,11 @@ CommandResult RemoveCommand::execute(arguments const& args)
         return CommandResult::InvalidSyntax;
     }
 
-    fs::path target;
-    bool recursive = false;
+    fs::path target{};
+    bool recursive{ false };
 
     if (args.size() == 1)
-    {
         target = args[0];
-    }
     else if (args.size() == 2)
     {
         if (!isRecursiveOption(args[0]))

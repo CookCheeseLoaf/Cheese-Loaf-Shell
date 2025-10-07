@@ -12,7 +12,9 @@ CopyCommand::isRecursiveOption(std::string const& option)
         return true;
 
     std::string upper{ option };
-    std::ranges::transform(upper, upper.begin(), [](const unsigned char c) { return static_cast<unsigned char>(std::toupper(c)); });
+    std::ranges::transform(
+        upper, upper.begin(),
+        [](unsigned char const c) { return static_cast<unsigned char>(std::toupper(c)); });
     return upper == "--RECURSIVE";
 }
 
@@ -28,7 +30,9 @@ CopyCommand::parseArguments(arguments const& args, bool& recursive)
     {
         if (!isRecursiveOption(args[0]))
         {
-            ErrorPrinter::setLastError(ansi::withForeground("Unknown option", ansi::Foreground::RED) + ": " + args[0]);
+            ErrorPrinter::setLastError(
+                ansi::withForeground("Unknown option", ansi::Foreground::RED)
+                + ": " + args[0]);
             return std::nullopt;
         }
 
@@ -36,16 +40,18 @@ CopyCommand::parseArguments(arguments const& args, bool& recursive)
         return std::make_pair(args[1], args[2]);
     }
 
-    ErrorPrinter::setLastError(ansi::withForeground("Usage", ansi::Foreground::RED) + ": copy [--recursive | -r] <source> <destination>");
+    ErrorPrinter::setLastError(
+        ansi::withForeground("Usage", ansi::Foreground::RED)
+        + ": copy [--recursive | -r] <source> <destination>");
     return std::nullopt;
 }
 
 CommandResult
 CopyCommand::performCopy(fs::path const& source,
-                                       fs::path const& destination,
-                                       const bool recursive)
+                         fs::path const& destination,
+                         bool const recursive)
 {
-    std::error_code ec;
+    std::error_code ec{};
 
     fs::copy_options options{ fs::copy_options::overwrite_existing };
     if (recursive)
@@ -55,8 +61,10 @@ CopyCommand::performCopy(fs::path const& source,
 
     if (ec)
     {
-        ErrorPrinter::setLastError(ansi::withForeground("Error", ansi::Foreground::RED) + " copying '" +
-            source.string() + "' to '" + destination.string() + "': " + ec.message());
+        ErrorPrinter::setLastError(
+            ansi::withForeground("Error", ansi::Foreground::RED)
+            + " copying '" + source.string() + "' to '" + destination.string() + "': "
+            + ec.message());
         return CommandResult::PathNotFound;
     }
 
@@ -66,19 +74,20 @@ CopyCommand::performCopy(fs::path const& source,
 CommandResult
 CopyCommand::execute(arguments const& args)
 {
-    bool recursive{};
+    bool recursive{ false };
     auto parsed{ parseArguments(args, recursive) };
 
     if (!parsed)
         return CommandResult::InvalidSyntax;
 
-    auto [sourceArg, destinationArg]{ *parsed };
-    const fs::path source{ sourceArg };
-    const fs::path destination{ destinationArg };
+    auto const& [sourceArg, destinationArg]{ *parsed };
+    fs::path const source{ sourceArg };
+    fs::path const destination{ destinationArg };
 
     if (!fs::exists(source))
     {
-        ErrorPrinter::setLastError("The system cannot find the path specified: " + source.string());
+        ErrorPrinter::setLastError(
+            "The system cannot find the path specified: " + source.string());
         return CommandResult::PathNotFound;
     }
 

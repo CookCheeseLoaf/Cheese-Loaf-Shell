@@ -11,11 +11,13 @@
 
 namespace ErrorPrinter
 {
-    void setLastError(std::string msg);
+    void setLastError(std::string /* msg */);
 
     std::optional<std::string> getLastError();
 
     void clearLastError();
 }
+
+void print_formatted_error(std::string const& /* message */);
 
 #endif //LSHELL_ERRORPRINTER_HXX

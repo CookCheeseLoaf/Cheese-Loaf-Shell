@@ -11,10 +11,10 @@ public:
 	ChangeDirectoriesCommand() = default;
     CommandResult execute(arguments const& /* args */) override;
 	[[nodiscard]] auto clone() const -> std::unique_ptr<Command> override;
-	static [[nodiscard]] fs::path get_current_directory() ;
+	[[nodiscard]] static fs::path get_current_directory();
 
 private:
-	static bool validateArguments(arguments const& args);
+	static bool validateArguments(arguments const& /* args */);
 };
 
 #endif

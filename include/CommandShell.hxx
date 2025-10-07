@@ -24,7 +24,7 @@ enum class CommandResult : int
     UnknownError
 };
 
-constexpr std::string_view to_string(CommandResult result)
+std::string_view constexpr to_string(CommandResult const result)
 {
     switch (result)
     {
@@ -78,7 +78,7 @@ struct CommandCallable
     }
 
     Command* operator->() noexcept { return ptr.get(); }
-    const Command* operator->() const noexcept { return ptr.get(); }
+    Command const* operator->() const noexcept { return ptr.get(); }
     explicit operator bool() const noexcept { return static_cast<bool>(ptr); }
 };
 

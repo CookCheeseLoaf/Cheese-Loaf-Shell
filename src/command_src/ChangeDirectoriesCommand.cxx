@@ -28,27 +28,26 @@ CommandResult ChangeDirectoriesCommand::execute(arguments const& args)
     {
         try
         {
-            const std::string home = FileSystemUtils::get_home_directory();
+            std::string const home{ FileSystemUtils::get_home_directory() };
             fs::current_path(home);
             return CommandResult::Success;
         }
-        catch (const fs::filesystem_error& e)
+        catch (fs::filesystem_error const& e)
         {
             std::cerr << "Error changing to home directory: " << e.what() << '\n';
             return CommandResult::Failure;
         }
     }
 
-    fs::path directory = args[0];
-
-    if (directory.is_relative())
-    {
-        directory = fs::current_path() / directory;
-    }
+    fs::path directory{ args[0] };
 
     try
     {
-        directory = fs::absolute(directory);
+        if (directory.is_relative())
+        {
+            directory = fs::absolute(directory);
+        }
+
         directory = fs::weakly_canonical(directory);
 
         if (!fs::exists(directory))
@@ -65,13 +64,11 @@ CommandResult ChangeDirectoriesCommand::execute(arguments const& args)
 
         fs::current_path(directory);
 
-        fs::path new_current = fs::current_path();
-
-        std::cout << "Changed to: " << new_current.string() << std::endl;
+        fs::path const new_current{ fs::current_path() };
 
         return CommandResult::Success;
     }
-    catch (const fs::filesystem_error& e)
+    catch (fs::filesystem_error const& e)
     {
         std::cerr << "Error changing directory: " << e.what() << '\n';
         return CommandResult::Failure;

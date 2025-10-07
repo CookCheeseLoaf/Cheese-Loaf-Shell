@@ -1,20 +1,19 @@
 #include <iostream>
-#include <sstream>
 #include <replxx.hxx>
 #include <string>
 
 #include "ANSI.hxx"
 #include "FileSystemUtils.hxx"
 #include "REPL.hxx"
+#include "StartupDirectory.hxx"
 
 int main()
 {
 	try
 	{
-		const std::string home = FileSystemUtils::get_home_directory();
-		fs::current_path(home);
+		ensure_startup_directory();
 	}
-	catch (const fs::filesystem_error& e)
+	catch (fs::filesystem_error const& e)
 	{
 		std::cerr << "Warning: Could not set initial directory to home: " << e.what() << '\n';
 	}
@@ -27,30 +26,29 @@ int main()
 
 	while (true)
 	{
-		const std::string home = FileSystemUtils::get_home_directory();
-		std::string directory = REPL::get_dir() + ansi::withForeground(">>> ", ansi::Foreground::MAGENTA);
-		if (directory.find(home) == 0)
-			directory = ansi::withForeground(home, ansi::Foreground::GREEN) +
-						directory.substr(home.size());
+		std::string const home{ FileSystemUtils::get_home_directory() };
+		std::string directory{ REPL::get_dir() + ansi::withForeground(">>> ", ansi::Foreground::MAGENTA) };
 
-		const char* cinput = rexx.input(directory);
+		if (directory.find(home) == 0)
+		{
+			directory = ansi::withForeground(home, ansi::Foreground::GREEN)
+					  + directory.substr(home.size());
+		}
+
+		char const* cinput{ rexx.input(directory) };
 		if (!cinput)
 			break;
 
-		std::string input = cinput;
+		std::string const input{ cinput };
 		if (input.empty())
 			continue;
 
 		rexx.history_add(input);
 
-		if (!repl(input))
-		{
-			std::cout.flush();
-		}
-		else
-		{
-			std::cout.flush();
-		}
+		bool const result{ repl(input) };
+		std::cout.flush();
+
+		if (!result) {}
 	}
 
 	return 0;

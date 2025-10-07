@@ -16,13 +16,13 @@ namespace fs = std::filesystem;
 class MakeDirectoriesCommand final : public Command
 {
 public:
-    CommandResult execute(arguments const& args) override;
+    CommandResult execute(arguments const& /* args */) override;
     [[nodiscard]] auto clone() const -> std::unique_ptr<Command> override;
 
 private:
-    static bool validateArguments(arguments const& args);
-    static CommandResult createDirectory(std::string_view arg);
-    static void reportError(std::error_code ec);
+    static bool validateArguments(arguments const& /* args */);
+    static CommandResult createDirectory(std::string_view /* arg */);
+    static void reportError(std::error_code const& /* ec */);
 };
 
 #endif // SHELL_MAKE_DIRECTORIES_COMMAND_HXX

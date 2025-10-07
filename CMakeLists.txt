@@ -3,7 +3,7 @@ project(lshell LANGUAGES C CXX)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_BUILD_TYPE Release)
+set(CMAKE_BUILD_TYPE RelWithDebInfo)
 
 set(SOURCES
         src/main.cxx
@@ -26,6 +26,8 @@ set(SOURCES
         src/get_console_width.c
         include/ErrorPrinter.hxx
         src/ErrorPrinter.cxx
+        include/StartupDirectory.hxx
+        src/StartupDirectory.cxx
 )
 
 add_executable(lshell ${SOURCES})

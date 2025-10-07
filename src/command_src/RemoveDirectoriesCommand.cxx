@@ -41,8 +41,7 @@ CommandResult RemoveDirectoriesCommand::removeDirectory(fs::path const& dir)
         return CommandResult::InvalidSyntax;
     }
 
-    std::error_code ec;
-    if (!fs::remove(dir, ec))
+    if (std::error_code ec{}; !fs::remove(dir, ec))
     {
         reportError(ec);
         return CommandResult::Failure;
@@ -56,8 +55,7 @@ CommandResult RemoveDirectoriesCommand::execute(arguments const& args)
     if (!validateArguments(args))
         return CommandResult::InvalidSyntax;
 
-    fs::path directory = args[0];
-
+    fs::path const directory{ args[0] };
     return removeDirectory(directory);
 }
 

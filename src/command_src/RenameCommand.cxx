@@ -22,7 +22,7 @@ CommandResult RenameCommand::renamePath(fs::path const& source, fs::path const& 
         return CommandResult::PathNotFound;
     }
 
-    std::error_code ec;
+    std::error_code ec{};
     fs::rename(source, destination, ec);
 
     if (ec)
@@ -36,8 +36,8 @@ CommandResult RenameCommand::renamePath(fs::path const& source, fs::path const& 
 
 CommandResult RenameCommand::execute(arguments const& args)
 {
-    std::string err;
-    auto parsed = parseArguments(args, err);
+    std::string err{};
+    auto parsed{ parseArguments(args, err) };
 
     if (!parsed)
     {
@@ -45,7 +45,7 @@ CommandResult RenameCommand::execute(arguments const& args)
         return CommandResult::InvalidSyntax;
     }
 
-    auto [source, destination] = *parsed;
+    auto const& [source, destination]{ *parsed };
     return renamePath(source, destination);
 }
 

@@ -9,7 +9,7 @@
 #include <algorithm>
 #include <ranges>
 
-inline char to_upper_char(const unsigned char c)
+inline char to_upper_char(unsigned char const c)
 {
     return static_cast<char>(std::toupper(c));
 }

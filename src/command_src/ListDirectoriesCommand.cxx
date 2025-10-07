@@ -8,15 +8,14 @@
 
 CommandResult ListDirectoriesCommand::execute(arguments const& args)
 {
-
-    const fs::path dir = args.empty() ? "." : args[0];
+    fs::path const dir{ args.empty() ? "." : args[0] };
 
     try
     {
-        for (const auto& entry : fs::directory_iterator{ dir })
+        for (auto const& entry : fs::directory_iterator{ dir })
             PrintEntry(entry);
     }
-    catch (const fs::filesystem_error&)
+    catch (fs::filesystem_error const&)
     {
         std::cerr << "The system cannot find the path specified.\n";
         return CommandResult::PathNotFound;
@@ -25,15 +24,15 @@ CommandResult ListDirectoriesCommand::execute(arguments const& args)
     return CommandResult::Success;
 }
 
-void ListDirectoriesCommand::PrintEntry(const fs::directory_entry& entry)
+void ListDirectoriesCommand::PrintEntry(fs::directory_entry const& entry)
 {
-    const std::string name = entry.path().filename().string();
-    const std::string color = DetermineColor(entry);
+    std::string const name{ entry.path().filename().string() };
+    std::string const color{ DetermineColor(entry) };
 
     std::cout << color << name << (color.empty() ? "" : ansi::RESET) << '\n';
 }
 
-std::string ListDirectoriesCommand::DetermineColor(const fs::directory_entry& entry)
+std::string ListDirectoriesCommand::DetermineColor(fs::directory_entry const& entry)
 {
     if (entry.is_directory()) return ansi::background(ansi::Background::BLUE);
     if (entry.is_character_file()) return ansi::foreground(ansi::Foreground::YELLOW);
@@ -41,11 +40,10 @@ std::string ListDirectoriesCommand::DetermineColor(const fs::directory_entry& en
     if (entry.is_other()) return ansi::foreground(ansi::Foreground::RED);
     if (entry.is_socket()) return ansi::foreground(ansi::Foreground::MAGENTA);
     if (entry.is_symlink()) return ansi::foreground(ansi::Foreground::CYAN);
-
     if (entry.is_regular_file() && FileSystemUtils::is_executable(entry))
         return ansi::foreground(ansi::Foreground::GREEN);
 
-    return "";
+    return {};
 }
 
 auto ListDirectoriesCommand::clone() const -> std::unique_ptr<Command>
