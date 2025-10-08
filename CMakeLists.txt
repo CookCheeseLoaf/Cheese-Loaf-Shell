@@ -1,11 +1,11 @@
-cmake_minimum_required(VERSION 3.28.3)
-project(cshell LANGUAGES C CXX)
+CMAKE_MINIMUM_REQUIRED(VERSION 3.28.3)
+PROJECT(cshell LANGUAGES C CXX)
 
-set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_BUILD_TYPE RelWithDebInfo)
+SET(CMAKE_CXX_STANDARD 20)
+SET(CMAKE_CXX_STANDARD_REQUIRED ON)
+SET(CMAKE_BUILD_TYPE RelWithDebInfo)
 
-set(SOURCES
+SET(SOURCES
         src/main.cxx
         src/REPL.cxx
         src/FileSystemUtils.cxx
@@ -30,20 +30,20 @@ set(SOURCES
         src/StartupDirectory.cxx
 )
 
-add_executable(cshell ${SOURCES})
-include_directories(include)
+ADD_EXECUTABLE(cshell ${SOURCES})
+INCLUDE_DIRECTORIES(include)
 
-find_package(Threads REQUIRED)
+FIND_PACKAGE(Threads REQUIRED)
 
-find_package(replxx REQUIRED)
+FIND_PACKAGE(replxx REQUIRED)
 
-if(replxx_FOUND)
-    message(STATUS "Found replxx package")
-    target_link_libraries(cshell PRIVATE replxx::replxx)
-endif()
+IF(replxx_FOUND)
+    MESSAGE(STATUS "Found replxx package")
+    TARGET_LINK_LIBRARIES(cshell PRIVATE replxx::replxx)
+ENDIF()
 
-if (MSVC)
-    target_compile_options(cshell PRIVATE
+IF(MSVC)
+    TARGET_COMPILE_OPTIONS(cshell PRIVATE
             /W4     # warning level 4
             /WX     # treat all warnings into errors
             /permissive-
@@ -52,8 +52,8 @@ if (MSVC)
             /we4305 # errors for floating point issues
             /we4838 # conversion from 'type_1' to 'type_2' requires a narrowing conversion
     )
-else()
-    target_compile_options(cshell PRIVATE -Wconversion -Wall -Werror)
-endif()
+ELSE()
+    TARGET_COMPILE_OPTIONS(cshell PRIVATE -Wconversion -Wall -Werror)
+ENDIF()
 
-install(TARGETS cshell DESTINATION bin)
+INSTALL(TARGETS cshell DESTINATION bin)
