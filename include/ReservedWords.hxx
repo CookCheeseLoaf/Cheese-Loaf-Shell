@@ -71,7 +71,7 @@ inline ReservedWords stringToReservedWord(std::string const& str)
     return ReservedWords::UNKNOWN;
 }
 
-constexpr const char* reservedWordToString(ReservedWords const word)
+constexpr char const* reservedWordToString(ReservedWords const word)
 {
     switch (word)
     {
@@ -103,7 +103,7 @@ constexpr const char* reservedWordToString(ReservedWords const word)
     }
 }
 
-constexpr const char* informationAboutReservedWords(ReservedWords const word)
+constexpr char const* informationAboutReservedWords(ReservedWords const word)
 {
     switch (word)
     {

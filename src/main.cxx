@@ -1,4 +1,5 @@
 #include <iostream>
+#include <ranges>
 #include <replxx.hxx>
 #include <string>
 
@@ -6,6 +7,31 @@
 #include "FileSystemUtils.hxx"
 #include "REPL.hxx"
 #include "StartupDirectory.hxx"
+#include "ReservedWords.hxx"
+
+static std::map<ReservedWords, std::function<CommandResult(const arguments&)>> g_commands;
+
+static std::vector<replxx::Replxx::Completion> completionFunction(std::string const& input, int& contextLen)
+{
+	std::vector<replxx::Replxx::Completion> completions;
+
+	contextLen = static_cast<int>(input.length());
+
+	std::string lowerInput{ input };
+	std::ranges::transform(lowerInput, lowerInput.begin(), [](unsigned char const c) { return static_cast<unsigned char>(std::toupper(c)); });
+
+	for (auto const& key: g_commands | std::views::keys)
+	{
+		std::string name{ reservedWordToString(key) };
+		std::string lowerName{ name };
+		std::ranges::transform(lowerName.begin(), lowerName.end(), lowerName.begin(), [](unsigned char const c) { return static_cast<unsigned char>(std::toupper(c)); });
+
+		if (lowerName.rfind(lowerInput, 0) == 0)
+			completions.emplace_back(name.c_str());
+	}
+
+	return completions;
+}
 
 int main()
 {
@@ -20,6 +46,9 @@ int main()
 
 	replxx::Replxx rexx{};
 	REPL repl{};
+	g_commands = repl.getCommands();
+	rexx.set_completion_callback(completionFunction);
+
 	std::ios::sync_with_stdio(false);
 	repl("ver");
 	std::cout.flush();

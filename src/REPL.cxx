@@ -194,3 +194,8 @@ bool REPL::is_it_the_command_executable(std::string_view const cmd)
            cmd.find('\\') != std::string_view::npos ||
            (!cmd.empty() && cmd.front() == '.');
 }
+
+auto REPL::getCommands() const -> std::map<ReservedWords, std::function<CommandResult(arguments const&)>> const&
+{
+    return m_commands;
+}
