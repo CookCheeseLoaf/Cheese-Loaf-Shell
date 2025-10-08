@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.28.3)
-project(lshell LANGUAGES C CXX)
+project(cshell LANGUAGES C CXX)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -30,7 +30,7 @@ set(SOURCES
         src/StartupDirectory.cxx
 )
 
-add_executable(lshell ${SOURCES})
+add_executable(cshell ${SOURCES})
 include_directories(include)
 
 find_package(Threads REQUIRED)
@@ -39,11 +39,11 @@ find_package(replxx REQUIRED)
 
 if(replxx_FOUND)
     message(STATUS "Found replxx package")
-    target_link_libraries(lshell PRIVATE replxx::replxx)
+    target_link_libraries(cshell PRIVATE replxx::replxx)
 endif()
 
 if (MSVC)
-    target_compile_options(lshell PRIVATE
+    target_compile_options(cshell PRIVATE
             /W4     # warning level 4
             /WX     # treat all warnings into errors
             /permissive-
@@ -53,7 +53,7 @@ if (MSVC)
             /we4838 # conversion from 'type_1' to 'type_2' requires a narrowing conversion
     )
 else()
-    target_compile_options(lshell PRIVATE -Wconversion -Wall -Werror)
+    target_compile_options(cshell PRIVATE -Wconversion -Wall -Werror)
 endif()
 
-install(TARGETS lshell DESTINATION bin)
+install(TARGETS cshell DESTINATION bin)
