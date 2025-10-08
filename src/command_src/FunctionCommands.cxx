@@ -77,25 +77,33 @@ CommandResult version_command(arguments const&)
         sizeof(versionBuf),
         "%s.%s.%s",
         ansi::withForeground(std::to_string(REPL::MAJOR), ansi::Foreground::RED).c_str(),
-        ansi::withForeground(std::to_string(REPL::MINOR), ansi::Foreground::YELLOW).c_str(),
-        ansi::withForeground(std::to_string(REPL::PATCH), ansi::Foreground::BLUE).c_str());
+        ansi::withForeground(std::to_string(REPL::MINOR), ansi::Foreground::BLUE).c_str(),
+        ansi::withForeground(std::to_string(REPL::PATCH), ansi::Foreground::CYAN).c_str());
 
     std::cout << R"(
-__/\\\_________________________________________________/\\\\\_______________/\\\\\\\\\\\____/\\\_________________________/\\\\\\_____/\\\\\\____
- _\/\\\_______________________________________________/\\\///______________/\\\/////////\\\_\/\\\________________________\////\\\____\////\\\____
-  _\/\\\______________________________________________/\\\_________________\//\\\______\///__\/\\\___________________________\/\\\_______\/\\\____
-   _\/\\\_________________/\\\\\_____/\\\\\\\\\_____/\\\\\\\\\_______________\////\\\_________\/\\\_____________/\\\\\\\\_____\/\\\_______\/\\\____
-    _\/\\\_______________/\\\///\\\__\////////\\\___\////\\\//___________________\////\\\______\/\\\\\\\\\\____/\\\/////\\\____\/\\\_______\/\\\____
-     _\/\\\______________/\\\__\//\\\___/\\\\\\\\\\_____\/\\\________________________\////\\\___\/\\\/////\\\__/\\\\\\\\\\\_____\/\\\_______\/\\\____
-      _\/\\\_____________\//\\\__/\\\___/\\\/////\\\_____\/\\\_________________/\\\______\//\\\__\/\\\___\/\\\_\//\\///////______\/\\\_______\/\\\____
-       _\/\\\\\\\\\\\\\\\__\///\\\\\/___\//\\\\\\\\/\\____\/\\\________________\///\\\\\\\\\\\/___\/\\\___\/\\\__\//\\\\\\\\\\__/\\\\\\\\\__/\\\\\\\\\_
-        _\///////////////_____\/////______\////////\//_____\///___________________\///////////_____\///____\///____\//////////__\/////////__\/////////__
+        d8b                              d8b
+        ?88                              88P              d8P
+         88b                            d88            d888888P
+ d8888b  888888b  d8888b  d8888b d8888b 888   d888b8b    ?88'   d8888b
+d8P' `P  88P `?8bd8P' ?88d8P' `Pd8P' ?88?88  d8P' ?88    88P   d8b_,dP
+88b     d88   88P88b  d8888b    88b  d88 88b 88b  ,88b   88b   88b
+`?888P'd88'   88b`?8888P'`?888P'`?8888P'  88b`?88P'`88b  `?8b  `?888P'
+
+
+
+         d8b              d8b  d8b
+         ?88              88P  88P
+          88b            d88  d88
+ .d888b,  888888b  d8888b888  888
+ ?8b,     88P `?8bd8b_,dP?88  ?88
+   `?8b  d88   88P88b     88b  88b
+`?888P' d88'   88b`?888P'  88b  88b
 )" << '\n';
 
-    std::cout << "Loaf Shell, version < " << versionBuf << " >\n"
+    std::cout << "Chocolate Shell, version < " << versionBuf << " >\n"
               << ansi::withForeground("Major:", ansi::Foreground::RED) << '\t' << REPL::MAJOR << '\n'
-              << ansi::withForeground("Minor:", ansi::Foreground::YELLOW) << '\t' << REPL::MINOR << '\n'
-              << ansi::withForeground("Patch:", ansi::Foreground::BLUE) << '\t' << REPL::PATCH << '\n';
+              << ansi::withForeground("Minor:", ansi::Foreground::BLUE) << '\t' << REPL::MINOR << '\n'
+              << ansi::withForeground("Patch:", ansi::Foreground::CYAN) << '\t' << REPL::PATCH << '\n';
 
     return CommandResult::Success;
 }
