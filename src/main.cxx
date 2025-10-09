@@ -38,7 +38,10 @@ static std::vector<replxx::Replxx::Completion> completionFunction(
 		std::ranges::transform(transformedName.begin(), transformedName.end(), transformedName.begin(), transformFunc);
 
 		if (transformedName.rfind(finalInput, 0) == 0)
+		{
+			std::ranges::transform(name.begin(), name.end(), name.begin(), transformFunc);
 			completions.emplace_back(name.c_str());
+		}
 	}
 	return completions;
 }
