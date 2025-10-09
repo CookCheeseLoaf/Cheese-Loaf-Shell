@@ -4,44 +4,60 @@
 #include <string>
 
 #include "ANSI.hxx"
+#include "ErrorPrinter.hxx"
 #include "FileSystemUtils.hxx"
 #include "REPL.hxx"
 #include "StartupDirectory.hxx"
 #include "ReservedWords.hxx"
 
+#ifdef _WIN32
+#include <windows.h>
+#endif
+
 static std::map<ReservedWords, std::function<CommandResult(const arguments&)>> g_commands;
 
-static std::vector<replxx::Replxx::Completion> completionFunction(std::string const& input, int& contextLen)
+static std::vector<replxx::Replxx::Completion> completionFunction(
+	std::string const& input, int& contextLen)
 {
 	std::vector<replxx::Replxx::Completion> completions;
-
 	contextLen = static_cast<int>(input.length());
 
-	std::string lowerInput{ input };
-	std::ranges::transform(lowerInput, lowerInput.begin(), [](unsigned char const c) { return static_cast<unsigned char>(std::toupper(c)); });
+	if (input.empty()) return completions;
 
-	for (auto const& key: g_commands | std::views::keys)
+	auto const transformFunc{ std::islower(input[0])
+							 ? [](unsigned char const c) { return static_cast<unsigned char>(std::tolower(c)); }
+	: [](unsigned char const c) { return static_cast<unsigned char>(std::toupper(c)); } };
+
+	std::string finalInput{ input };
+	std::ranges::transform(finalInput, finalInput.begin(), transformFunc);
+
+	for (auto const& key : g_commands | std::views::keys)
 	{
 		std::string name{ reservedWordToString(key) };
-		std::string lowerName{ name };
-		std::ranges::transform(lowerName.begin(), lowerName.end(), lowerName.begin(), [](unsigned char const c) { return static_cast<unsigned char>(std::toupper(c)); });
+		std::string transformedName{ name };
+		std::ranges::transform(transformedName.begin(), transformedName.end(), transformedName.begin(), transformFunc);
 
-		if (lowerName.rfind(lowerInput, 0) == 0)
+		if (transformedName.rfind(finalInput, 0) == 0)
 			completions.emplace_back(name.c_str());
 	}
-
 	return completions;
 }
 
 int main()
 {
+#ifdef _WIN32
+	HANDLE hOut{ GetStdHandle(STD_OUTPUT_HANDLE) };
+	DWORD dwMode{};
+	GetConsoleMode(hOut, &dwMode);
+	SetConsoleMode(hOut, dwMode | ENABLE_VIRTUAL_TERMINAL_PROCESSING);
+#endif
 	try
 	{
 		ensure_startup_directory();
 	}
 	catch (fs::filesystem_error const& e)
 	{
-		std::cerr << "Warning: Could not set initial directory to home: " << e.what() << '\n';
+		print_formatted_error(ansi::withForeground("Warning", ansi::Foreground::YELLOW) + ": Could not set initial directory to home: " + e.what());
 	}
 
 	replxx::Replxx rexx{};
