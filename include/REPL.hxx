@@ -37,7 +37,7 @@ public:
     static std::string get_dir();
     static constexpr int MAJOR = 0;
     static constexpr int MINOR = 2;
-    static constexpr int PATCH = 0;
+    static constexpr int PATCH = 1;
     ParsedCmd parsed_command;
 };
 

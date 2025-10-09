@@ -3,6 +3,9 @@
 #include <iostream>
 #include <algorithm>
 
+#include "ANSI.hxx"
+#include "ErrorPrinter.hxx"
+
 bool RemoveCommand::isRecursiveOption(std::string_view const option)
 {
     if (option == "-r")
@@ -17,7 +20,7 @@ CommandResult RemoveCommand::removePath(fs::path const& target, bool const recur
 {
     if (!fs::exists(target))
     {
-        std::cerr << "The system cannot find the path specified: " << target << '\n';
+        ErrorPrinter::setLastError("The system cannot find the path specified: " + target.string());
         return CommandResult::PathNotFound;
     }
 
@@ -27,7 +30,7 @@ CommandResult RemoveCommand::removePath(fs::path const& target, bool const recur
         {
             if (!recursive)
             {
-                std::cerr << "The specified path is a directory. Use -r to remove recursively.\n";
+                ErrorPrinter::setLastError("The specified path is a directory. Use -r to remove recursively.");
                 return CommandResult::InvalidSyntax;
             }
             fs::remove_all(target);
@@ -37,7 +40,7 @@ CommandResult RemoveCommand::removePath(fs::path const& target, bool const recur
     }
     catch (fs::filesystem_error const& e)
     {
-        std::cerr << "Error removing '" << target << "': " << e.what() << '\n';
+        ErrorPrinter::setLastError(ansi::withForeground("Error", ansi::Foreground::RED) + " removing '" + target.string() + "': " + e.what());
         return CommandResult::PathNotFound;
     }
 
@@ -48,7 +51,8 @@ CommandResult RemoveCommand::execute(arguments const& args)
 {
     if (args.empty())
     {
-        std::cerr << "Usage: remove [--recursive | -r] <path>\n";
+        ErrorPrinter::setLastError(ansi::withForeground("Usage", ansi::Foreground::RED)
+        + ": REMOVE [--RECURSIVE | -r] <path>");
         return CommandResult::InvalidSyntax;
     }
 
@@ -61,7 +65,8 @@ CommandResult RemoveCommand::execute(arguments const& args)
     {
         if (!isRecursiveOption(args[0]))
         {
-            std::cerr << "Unknown option: " << args[0] << '\n';
+            ErrorPrinter::setLastError(ansi::withForeground("Unknown option", ansi::Foreground::RED)
+            + ": " + args[0]);
             return CommandResult::UnknownOption;
         }
         recursive = true;
@@ -69,7 +74,8 @@ CommandResult RemoveCommand::execute(arguments const& args)
     }
     else
     {
-        std::cerr << "Usage: remove [--recursive | -r] <path>\n";
+        ErrorPrinter::setLastError(ansi::withForeground("Usage", ansi::Foreground::RED)
+        + ": REMOVE [--RECURSIVE | -r] <path>");
         return CommandResult::InvalidSyntax;
     }
 

@@ -4,8 +4,8 @@
 
 #include "StartupDirectory.hxx"
 
-#include <iostream>
-
+#include "ANSI.hxx"
+#include "ErrorPrinter.hxx"
 #include "FileSystemUtils.hxx"
 
 void ensure_startup_directory()
@@ -29,10 +29,10 @@ void ensure_startup_directory()
     }
     catch (fs::filesystem_error const& e)
     {
-        std::cerr << "Startup: filesystem error while initializing working directory: " << e.what() << '\n';
+        print_formatted_error(ansi::withForeground("Startup", ansi::Foreground::GREEN) + ": filesystem error while initializing working directory: " + e.what());
     }
     catch (std::exception const& e)
     {
-        std::cerr << "Startup: error while initializing working directory: " << e.what() << '\n';
+        print_formatted_error(ansi::withForeground("Startup", ansi::Foreground::GREEN) + ": error while initializing working directory: " + e.what());
     }
 }

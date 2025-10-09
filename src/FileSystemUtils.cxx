@@ -7,6 +7,9 @@
 #include <iostream>
 #include <process.h>
 
+#include "ANSI.hxx"
+#include "ErrorPrinter.hxx"
+
 #ifdef _WIN32
 #include <windows.h>
 #else
@@ -38,7 +41,7 @@ namespace FileSystemUtils
             return home;
         }
     #else
-        if (const char* home = std::getenv("HOME"))
+        if (const char* home{ std::getenv("HOME") })
             return std::string(home);
     #endif
         return {};
@@ -86,7 +89,7 @@ namespace FileSystemUtils
         pid_t pid{ fork() };
         if (pid < 0)
         {
-            std::cerr << "fork failed: " << strerror(errno) << '\n';
+            print_formatted_error(ansi::withForeground("fork failed", ansi::Foreground::RED) + ": " + strerror(errno));
             return false;
         }
 
@@ -101,7 +104,7 @@ namespace FileSystemUtils
             int status{};
             if (waitpid(pid, &status, 0) < 0)
             {
-                std::cerr << "waitpid failed: " << strerror(errno) << "\n";
+                print_formatted_error(ansi::withForeground("waitpid failed", ansi::Foreground::RED) + ": " + strerror(errno));
                 return false;
             }
 

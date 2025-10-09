@@ -9,6 +9,8 @@
 #include "ANSI.hxx"
 #include "FileSystemUtils.hxx"
 #include <fstream>
+
+#include "ErrorPrinter.hxx"
 #include "REPL.hxx"
 
 CommandResult help_command(arguments const&)
@@ -35,7 +37,7 @@ CommandResult touch_command(arguments const& args)
 {
     if (args.size() != 1)
     {
-        std::cerr << "The syntax of the command is incorrect. Usage: TOUCH <file>\n";
+        ErrorPrinter::setLastError(ansi::withForeground("Usage", ansi::Foreground::RED) + ": TOUCH <file>");
         return CommandResult::InvalidSyntax;
     }
 
@@ -54,14 +56,14 @@ CommandResult show_command(arguments const& args)
 {
     if (args.size() != 1)
     {
-        std::cerr << "The syntax of the command is incorrect. Usage: SHOW <file>\n";
+        ErrorPrinter::setLastError(ansi::withForeground("Usage", ansi::Foreground::RED) + ": SHOW <file>");
         return CommandResult::InvalidSyntax;
     }
 
     std::ifstream const file{ args[0] };
     if (!file)
     {
-        std::cerr << "Error: Unable to open file '" << args[0] << "' for reading.\n";
+        ErrorPrinter::setLastError(ansi::withForeground("Error", ansi::Foreground::RED) + ": Unable to open file '" + args[0] + "' for reading.");
         return CommandResult::PathNotFound;
     }
 

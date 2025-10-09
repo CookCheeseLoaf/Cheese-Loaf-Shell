@@ -5,6 +5,7 @@
 #include "ListDirectoriesCommand.hxx"
 #include <iostream>
 #include "ANSI.hxx"
+#include "ErrorPrinter.hxx"
 
 CommandResult ListDirectoriesCommand::execute(arguments const& args)
 {
@@ -17,7 +18,7 @@ CommandResult ListDirectoriesCommand::execute(arguments const& args)
     }
     catch (fs::filesystem_error const&)
     {
-        std::cerr << "The system cannot find the path specified.\n";
+        ErrorPrinter::setLastError("The system cannot find the path specified.");
         return CommandResult::PathNotFound;
     }
 

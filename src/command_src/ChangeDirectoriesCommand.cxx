@@ -4,6 +4,8 @@
 
 #include "ChangeDirectoriesCommand.hxx"
 #include <iostream>
+#include "ANSI.hxx"
+#include "ErrorPrinter.hxx"
 
 bool ChangeDirectoriesCommand::validateArguments(arguments const& args)
 {
@@ -12,7 +14,9 @@ bool ChangeDirectoriesCommand::validateArguments(arguments const& args)
 
     if (args.size() != 1)
     {
-        std::cerr << "The syntax of the command is incorrect. Usage: chdir <directory>\n";
+        ErrorPrinter::setLastError(
+            ansi::withForeground("Usage", ansi::Foreground::RED)
+            + ": CHDIR [--RECURSIVE | -r] <source> <destination>");
         return false;
     }
 
@@ -34,7 +38,7 @@ CommandResult ChangeDirectoriesCommand::execute(arguments const& args)
         }
         catch (fs::filesystem_error const& e)
         {
-            std::cerr << "Error changing to home directory: " << e.what() << '\n';
+            ErrorPrinter::setLastError("Error changing to home directory: " + std::string(e.what()));
             return CommandResult::Failure;
         }
     }
@@ -52,13 +56,17 @@ CommandResult ChangeDirectoriesCommand::execute(arguments const& args)
 
         if (!fs::exists(directory))
         {
-            std::cerr << "Error: Directory '" << directory.string() << "' does not exist.\n";
+            ErrorPrinter::setLastError(
+                ansi::withForeground("Error", ansi::Foreground::RED)
+                + ": Directory '" + directory.string() + "' does not exist.");
             return CommandResult::PathNotFound;
         }
 
         if (!fs::is_directory(directory))
         {
-            std::cerr << "Error: '" << directory.string() << "' is not a directory.\n";
+            ErrorPrinter::setLastError(
+                ansi::withForeground("Error", ansi::Foreground::RED)
+                + ": '" + directory.string() + "' is not a directory.");
             return CommandResult::InvalidSyntax;
         }
 
@@ -70,7 +78,7 @@ CommandResult ChangeDirectoriesCommand::execute(arguments const& args)
     }
     catch (fs::filesystem_error const& e)
     {
-        std::cerr << "Error changing directory: " << e.what() << '\n';
+        ErrorPrinter::setLastError("Error changing directory: " + std::string(e.what()));
         return CommandResult::Failure;
     }
 }

@@ -117,13 +117,12 @@ bool REPL::operator()(std::string const& input)
         case CommandResult::PathNotFound:
         case CommandResult::UnknownOption:
         case CommandResult::AccessDenied:
-            std::cerr << "Error: " << to_string(*result)
-                      << " - command '" << parsed_command.command << "'\n";
+            print_formatted_error(ErrorPrinter::getLastError().value());
             return false;
 
         default:
-            std::cerr << "Error: Unexpected result from command '"
-                      << parsed_command.command << "'\n";
+            print_formatted_error("Error: Unexpected result from command '"
+                      + parsed_command.command);
             return false;
     }
 }

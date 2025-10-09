@@ -2,12 +2,15 @@
 #include <iostream>
 #include <vector>
 
+#include "ANSI.hxx"
+#include "ErrorPrinter.hxx"
+
 std::optional<std::pair<std::string, std::string>>
 RenameCommand::parseArguments(arguments const& args, std::string& err)
 {
     if (args.size() != 2)
     {
-        err = "The syntax of the command is incorrect. Usage: rename <old> <new>";
+        err = ansi::withForeground("Usage", ansi::Foreground::RED)+ ": RENAME <old> <new>";
         return std::nullopt;
     }
 
@@ -18,7 +21,7 @@ CommandResult RenameCommand::renamePath(fs::path const& source, fs::path const& 
 {
     if (!fs::exists(source))
     {
-        std::cerr << "The system cannot find the path specified: " << source << '\n';
+        ErrorPrinter::setLastError("The system cannot find the path specified: " + source.string());
         return CommandResult::PathNotFound;
     }
 
@@ -27,7 +30,7 @@ CommandResult RenameCommand::renamePath(fs::path const& source, fs::path const& 
 
     if (ec)
     {
-        std::cerr << "Error renaming file: " << ec.message() << '\n';
+        ErrorPrinter::setLastError("Error renaming file: " + ec.message());
         return CommandResult::Failure;
     }
 
@@ -41,7 +44,7 @@ CommandResult RenameCommand::execute(arguments const& args)
 
     if (!parsed)
     {
-        std::cerr << err << '\n';
+        ErrorPrinter::setLastError(err);
         return CommandResult::InvalidSyntax;
     }
 

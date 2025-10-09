@@ -42,7 +42,7 @@ CopyCommand::parseArguments(arguments const& args, bool& recursive)
 
     ErrorPrinter::setLastError(
         ansi::withForeground("Usage", ansi::Foreground::RED)
-        + ": copy [--recursive | -r] <source> <destination>");
+        + ": COPY [--RECURSIVE | -r] <source> <destination>");
     return std::nullopt;
 }
 

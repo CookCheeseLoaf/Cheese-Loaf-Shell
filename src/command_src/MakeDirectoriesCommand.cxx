@@ -7,11 +7,16 @@
 #include <iostream>
 #include <system_error>
 
+#include "ANSI.hxx"
+#include "ErrorPrinter.hxx"
+
 bool MakeDirectoriesCommand::validateArguments(arguments const& args)
 {
     if (args.size() != 1)
     {
-        std::cerr << "The syntax of the command is incorrect. Usage: mkdir <directory>\n";
+        ErrorPrinter::setLastError(
+            ansi::withForeground("Usage", ansi::Foreground::RED)
+            + ": MKDIR <source>");
         return false;
     }
     return true;
@@ -21,11 +26,13 @@ CommandResult MakeDirectoriesCommand::createDirectory(std::string_view const arg
 {
     if (arg.empty())
     {
-        std::cerr << "The syntax of the command is incorrect. Usage: mkdir <directory>\n";
+        ErrorPrinter::setLastError(
+            ansi::withForeground("Usage", ansi::Foreground::RED)
+            + ": MKDIR <source>");
         return CommandResult::InvalidSyntax;
     }
 
-    fs::path directoryPath{ arg };
+    fs::path const directoryPath{ arg };
 
     std::error_code ec{};
     fs::create_directories(directoryPath, ec);
@@ -51,13 +58,13 @@ void MakeDirectoriesCommand::reportError(std::error_code const& ec)
     switch (ec.value())
     {
         case static_cast<int>(std::errc::permission_denied):
-            std::cerr << "Access is denied.\n";
+            ErrorPrinter::setLastError("Access is denied.");
             break;
         case static_cast<int>(std::errc::file_exists):
-            std::cerr << "A subdirectory or file already exists.\n";
+            ErrorPrinter::setLastError("A subdirectory or file already exists.");
             break;
         default:
-            std::cerr << "The system cannot find the path specified.\n";
+            ErrorPrinter::setLastError("The system cannot find the path specified.");
             break;
     }
 }
