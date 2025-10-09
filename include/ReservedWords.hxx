@@ -20,7 +20,7 @@ enum class ReservedWords : unsigned char
     DELETE,
     ERASE,
     PRINT,
-    EXIT,
+    BYE,
     HELP,
     MKDIR,
     MD,
@@ -51,7 +51,7 @@ inline ReservedWords stringToReservedWord(std::string const& str)
         {"DELETE",  ReservedWords::DELETE},
         {"ERASE",   ReservedWords::ERASE},
         {"PRINT",   ReservedWords::PRINT},
-        {"EXIT",    ReservedWords::EXIT},
+        {"BYE",    ReservedWords::BYE},
         {"HELP",    ReservedWords::HELP},
         {"MKDIR",   ReservedWords::MKDIR},
         {"MD",      ReservedWords::MD},
@@ -86,7 +86,7 @@ constexpr char const* reservedWordToString(ReservedWords const word)
         case ReservedWords::DELETE:    return "DELETE";
         case ReservedWords::ERASE:     return "ERASE";
         case ReservedWords::PRINT:     return "PRINT";
-        case ReservedWords::EXIT:      return "EXIT";
+        case ReservedWords::BYE:      return "BYE";
         case ReservedWords::HELP:      return "HELP";
         case ReservedWords::MKDIR:     return "MKDIR";
         case ReservedWords::MD:        return "MD";
@@ -107,7 +107,7 @@ constexpr char const* informationAboutReservedWords(ReservedWords const word)
 {
     switch (word)
     {
-        case ReservedWords::EXIT: return "Exit from the shell.";
+        case ReservedWords::BYE: return "Exit from the shell.";
         case ReservedWords::CLEAR:
         case ReservedWords::CLS: return "Clear the screen.";
         case ReservedWords::DIR: return "List files and directories.";

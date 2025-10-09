@@ -40,7 +40,7 @@ REPL::REPL()
     m_commands[ReservedWords::RMDIR]  = [](auto&& args) { return RemoveDirectoriesCommand{}.execute(args); };
     m_commands[ReservedWords::RENAME] = [](auto&& args) { return RenameCommand{}.execute(args); };
 
-    m_commands[ReservedWords::EXIT]     = [](auto&&) { return CommandResult::Exit; };
+    m_commands[ReservedWords::BYE]     = [](auto&&) { return CommandResult::Exit; };
     m_commands[ReservedWords::CLEAR]    = [](auto&&) { std::cout << ansi::CLEAR_SCREEN; return CommandResult::Success; };
     m_commands[ReservedWords::WHEREAMI] = [](auto&&) { std::cout << get_dir() << '\n'; return CommandResult::Success; };
     m_commands[ReservedWords::PAUSE]    = [](auto&&) { portable_getch(); return CommandResult::Success; };
