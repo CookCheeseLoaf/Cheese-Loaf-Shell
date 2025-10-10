@@ -10,7 +10,7 @@
 
 enum class ReservedWords : unsigned char
 {
-    DIR,
+    BYE,
     CD,
     CHDIR,
     CLEAR,
@@ -18,23 +18,24 @@ enum class ReservedWords : unsigned char
     COPY,
     DEL,
     DELETE,
+    DIR,
     ERASE,
-    PRINT,
-    BYE,
     HELP,
-    MKDIR,
     MD,
+    MKDIR,
     PAUSE,
-    RMDIR,
+    PRINT,
     RD,
     RENAME,
     REN,
+    RMDIR,
     SHOW,
     TOUCH,
-    WHEREAMI,
     VER,
-    UNKNOWN
+    WHEREAMI,
+    UNKNOWN,
 };
+
 
 
 inline ReservedWords stringToReservedWord(std::string const& str)
