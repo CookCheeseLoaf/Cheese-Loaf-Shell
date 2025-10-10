@@ -1,4 +1,4 @@
-# Welcome to the Chocolate Shell (cshell)
+# Welcome to the Cheese Loaf Shell (lshell)
 A portable minimalist heavily Influnced by DOS shell and command prompt shell.
 
 > WARNING: The shell is on ALPHA release, not all command works out of the box,
@@ -33,5 +33,5 @@ cmake --install build --config RelWithDebInfo
 ### How to run it?
 you can either run the cshell in the compiled **build** directories or call it directly in terminal (after moving it through the binary directories)
 ```shell
-cshell
+lshell
 ```

@@ -1,5 +1,5 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 3.28.3)
-PROJECT(cshell LANGUAGES C CXX)
+PROJECT(lshell LANGUAGES C CXX)
 
 SET(CMAKE_CXX_STANDARD 20)
 SET(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -30,7 +30,7 @@ SET(SOURCES
         src/StartupDirectory.cxx
 )
 
-ADD_EXECUTABLE(cshell ${SOURCES})
+ADD_EXECUTABLE(lshell ${SOURCES})
 INCLUDE_DIRECTORIES(include)
 
 FIND_PACKAGE(Threads REQUIRED)
@@ -39,11 +39,11 @@ FIND_PACKAGE(replxx REQUIRED)
 
 IF(replxx_FOUND)
     MESSAGE(STATUS "Found replxx package")
-    TARGET_LINK_LIBRARIES(cshell PRIVATE replxx::replxx)
+    TARGET_LINK_LIBRARIES(lshell PRIVATE replxx::replxx)
 ENDIF()
 
 IF(MSVC)
-    TARGET_COMPILE_OPTIONS(cshell PRIVATE
+    TARGET_COMPILE_OPTIONS(lshell PRIVATE
             /W4     # warning level 4
             /WX     # treat all warnings into errors
             /permissive-
@@ -53,7 +53,7 @@ IF(MSVC)
             /we4838 # conversion from 'type_1' to 'type_2' requires a narrowing conversion
     )
 ELSE()
-    TARGET_COMPILE_OPTIONS(cshell PRIVATE -Wconversion -Wall -Werror)
+    TARGET_COMPILE_OPTIONS(lshell PRIVATE -Wconversion -Wall -Werror)
 ENDIF()
 
-INSTALL(TARGETS cshell DESTINATION bin)
+INSTALL(TARGETS lshell DESTINATION bin)

@@ -80,32 +80,23 @@ CommandResult version_command(arguments const&)
         "%s.%s.%s",
         ansi::withForeground(std::to_string(REPL::MAJOR), ansi::Foreground::RED).c_str(),
         ansi::withForeground(std::to_string(REPL::MINOR), ansi::Foreground::BLUE).c_str(),
-        ansi::withForeground(std::to_string(REPL::PATCH), ansi::Foreground::CYAN).c_str());
+        ansi::withForeground(std::to_string(REPL::PATCH), ansi::Foreground::YELLOW).c_str());
 
     std::cout << R"(
-        d8b                              d8b
-        ?88                              88P              d8P
-         88b                            d88            d888888P
- d8888b  888888b  d8888b  d8888b d8888b 888   d888b8b    ?88'   d8888b
-d8P' `P  88P `?8bd8P' ?88d8P' `Pd8P' ?88?88  d8P' ?88    88P   d8b_,dP
-88b     d88   88P88b  d8888b    88b  d88 88b 88b  ,88b   88b   88b
-`?888P'd88'   88b`?8888P'`?888P'`?8888P'  88b`?88P'`88b  `?8b  `?888P'
+ d8b                      ,d8888b             d8b              d8b  d8b
+ 88P                      88P'                ?88              88P  88P
+d88                    d888888P                88b            d88  d88
+888   d8888b  d888b8b    ?88'         .d888b,  888888b  d8888b888  888
+?88  d8P' ?88d8P' ?88    88P          ?8b,     88P `?8bd8b_,dP?88  ?88
+ 88b 88b  d8888b  ,88b  d88             `?8b  d88   88P88b     88b  88b
+  88b`?8888P'`?88P'`88bd88'          `?888P' d88'   88b`?888P'  88b  88b
 
-
-
-         d8b              d8b  d8b
-         ?88              88P  88P
-          88b            d88  d88
- .d888b,  888888b  d8888b888  888
- ?8b,     88P `?8bd8b_,dP?88  ?88
-   `?8b  d88   88P88b     88b  88b
-`?888P' d88'   88b`?888P'  88b  88b
 )" << '\n';
 
-    std::cout << "Chocolate Shell, version < " << versionBuf << " >\n"
+    std::cout << "Loaf Shell, version < " << versionBuf << " >\n"
               << ansi::withForeground("Major:", ansi::Foreground::RED) << '\t' << REPL::MAJOR << '\n'
               << ansi::withForeground("Minor:", ansi::Foreground::BLUE) << '\t' << REPL::MINOR << '\n'
-              << ansi::withForeground("Patch:", ansi::Foreground::CYAN) << '\t' << REPL::PATCH << '\n';
+              << ansi::withForeground("Patch:", ansi::Foreground::YELLOW) << '\t' << REPL::PATCH << '\n';
 
     return CommandResult::Success;
 }
